@@ -1,0 +1,34 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.1.2'
+	id 'io.spring.dependency-management' version '1.1.2'
+}
+
+group = 'ru.idfedorov09.telegram.bot'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.kafka:spring-kafka'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
+
+	implementation 'com.google.code.gson:gson:2.10.1'
+	implementation 'org.telegram:telegrambots:6.7.0'
+	implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+	implementation 'org.telegram:telegrambots-spring-boot-starter:6.7.0'
+
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

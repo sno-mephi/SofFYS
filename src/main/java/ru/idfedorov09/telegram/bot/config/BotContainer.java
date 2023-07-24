@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import ru.idfedorov09.telegram.bot.UpdatesHandler;
-import ru.idfedorov09.telegram.bot.entity.TelegramInteractionMethod;
 
 @Component
 @PropertySource("application.properties")

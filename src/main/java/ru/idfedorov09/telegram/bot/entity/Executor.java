@@ -1,5 +1,7 @@
 package ru.idfedorov09.telegram.bot.entity;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -14,8 +16,10 @@ public class Executor extends TelegramLongPollingBot {
     @Autowired
     private BotContainer botContainer;
 
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
     public Executor(){
-        System.out.println("Lol! Negr."); // добавить логи
+        log.info("Telegram method executor created.");
     }
     @Override
     public void onUpdateReceived(Update update) {

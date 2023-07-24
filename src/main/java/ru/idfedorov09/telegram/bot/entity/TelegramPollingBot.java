@@ -1,8 +1,11 @@
 package ru.idfedorov09.telegram.bot.entity;
 
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -12,6 +15,9 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import ru.idfedorov09.telegram.bot.config.BotContainer;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @Component
 @ConditionalOnProperty(name = "telegram.bot.interaction-method", havingValue = "polling", matchIfMissing = true)
 public class TelegramPollingBot extends TelegramLongPollingBot {
@@ -19,13 +25,22 @@ public class TelegramPollingBot extends TelegramLongPollingBot {
     @Autowired
     private BotContainer botContainer;
 
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
     public TelegramPollingBot() {
-        System.out.println("polling"); //логи
+        log.info("Polling starting");
     }
 
     @Override
     public void onUpdateReceived(Update update) {
-        botContainer.updatesHandler.handle(this, update);
+
+        new Thread(()->{
+            long threadId = Thread.currentThread().getId();
+            String threadName = "upd-" + threadId;
+            Thread.currentThread().setName(threadName);
+            botContainer.updatesHandler.handle(this, update);
+        }).start();
+
     }
 
     @Override

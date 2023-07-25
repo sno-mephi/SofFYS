@@ -30,7 +30,7 @@ public class TelegramWebhookBot{
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public TelegramWebhookBot(){
-        log.info("Webhook starting..");
+        log.error("Webhook starting..");
     }
 
     @PostConstruct

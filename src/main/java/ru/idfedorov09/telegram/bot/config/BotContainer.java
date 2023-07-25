@@ -13,10 +13,10 @@ public class BotContainer {
     @Value("${telegram.bot.token}")
     public String BOT_TOKEN;
 
-    @Value("${telegram.bot.name}")
+    @Value("${telegram.bot.name:idfedorov09_bot}")
     public String BOT_NAME;
 
-    @Value("${telegram.bot.reconnect-pause}")
+    @Value("${telegram.bot.reconnect-pause:1000}")
     public int RECONNECT_PAUSE;
 
     @Autowired

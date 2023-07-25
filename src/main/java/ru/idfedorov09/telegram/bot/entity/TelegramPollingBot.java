@@ -61,15 +61,15 @@ public class TelegramPollingBot extends TelegramLongPollingBot {
         try {
             telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         }catch (TelegramApiException e) {
-            System.out.println("Can't create API: "+e);
+            log.error("Can't create API: "+e);
             botConnect();
         }
 
         try {
             telegramBotsApi.registerBot(this);
-            System.out.println("TelegramAPI started. Look for messages");
+            log.error("TelegramAPI started. Look for messages");
         } catch (TelegramApiException e) {
-            System.out.println("Cant Connect. Pause " + botContainer.RECONNECT_PAUSE / 1000 + "sec and try again. Error: " + e.getMessage());
+            log.error("Cant Connect. Pause " + botContainer.RECONNECT_PAUSE / 1000 + "sec and try again. Error: " + e.getMessage());
             try {
                 Thread.sleep(botContainer.RECONNECT_PAUSE);
             } catch (InterruptedException e1) {

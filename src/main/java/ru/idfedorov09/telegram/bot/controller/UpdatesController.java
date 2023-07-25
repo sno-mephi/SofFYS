@@ -3,6 +3,7 @@ package ru.idfedorov09.telegram.bot.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -29,7 +30,8 @@ public class UpdatesController extends UpdatesSender implements UpdatesHandler {
     private int cnt = 0;
 
     @Override
-    //@Async
+    //@Async("linearThread")
+    //@Async("infinityThread")
     public void handle(TelegramLongPollingBot telegramBot, Update update) {
         String chatId = updatesUtil.getChatId(update);
         String message = updatesUtil.getText(update);
@@ -38,7 +40,7 @@ public class UpdatesController extends UpdatesSender implements UpdatesHandler {
             log.info("handle update");
             cnt++;
             Message sent = telegramBot.execute(new SendMessage(chatId, ""+cnt));
-            Thread.sleep(60 * 1000);
+            Thread.sleep(5 * 1000);
             EditMessageText editMessageText = new EditMessageText();
             editMessageText.setChatId(chatId);
             editMessageText.setMessageId(sent.getMessageId());

@@ -22,25 +22,36 @@ public class GeneralConfig {
         return new Gson();
     }
 
+    private ThreadPoolTaskExecutor executor(int corePoolSize, int maxPoolSize, int queCapacity, String prefix){
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(corePoolSize);
+        executor.setMaxPoolSize(maxPoolSize);
+        executor.setQueueCapacity(queCapacity);
+        executor.setThreadNamePrefix(prefix);
+        return executor;
+    }
+
     @Bean(name = "linearThread")
     public Executor linearThreadExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(1);
-        executor.setMaxPoolSize(1);
-        executor.setQueueCapacity(Integer.MAX_VALUE);
-        executor.setThreadNamePrefix("AsyncThread-");
+        ThreadPoolTaskExecutor executor = executor(
+                1,
+                1,
+                Integer.MAX_VALUE,
+                "bot-linear-thread-"
+        );
         executor.initialize();
         return executor;
     }
 
 
-    @Bean(name = "inftyThread")
+    @Bean(name = "infinityThread")
     public Executor infinityThreadExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(Integer.MAX_VALUE);
-        executor.setMaxPoolSize(Integer.MAX_VALUE);
-        executor.setQueueCapacity(Integer.MAX_VALUE);
-        executor.setThreadNamePrefix("AsyncThread-");
+        ThreadPoolTaskExecutor executor = executor(
+                Integer.MAX_VALUE,
+                Integer.MAX_VALUE,
+                Integer.MAX_VALUE,
+                "bot-async-thread-"
+        );
         executor.initialize();
         return executor;
     }

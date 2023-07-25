@@ -5,18 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import ru.idfedorov09.telegram.bot.config.BotContainer;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Component
 @ConditionalOnProperty(name = "telegram.bot.interaction-method", havingValue = "polling", matchIfMissing = true)
@@ -28,7 +23,12 @@ public class TelegramPollingBot extends TelegramLongPollingBot {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public TelegramPollingBot() {
-        log.info("Polling starting");
+        log.info("Polling starting..");
+    }
+
+    @PostConstruct
+    public void postConstruct(){
+        log.info("ok, started.");
     }
 
     @Override
@@ -36,8 +36,9 @@ public class TelegramPollingBot extends TelegramLongPollingBot {
 
         new Thread(()->{
             long threadId = Thread.currentThread().getId();
-            String threadName = "upd-" + threadId;
+            String threadName = "bot-upd-" + threadId;
             Thread.currentThread().setName(threadName);
+            log.info("Update received: "+update);
             botContainer.updatesHandler.handle(this, update);
         }).start();
 

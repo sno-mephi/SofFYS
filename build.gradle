@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.1.2'
 	id 'io.spring.dependency-management' version '1.1.2'
+	id 'org.jetbrains.kotlin.jvm' version '1.9.0'
 }
 
 group = 'ru.idfedorov09.telegram.bot'
@@ -26,6 +27,8 @@ dependencies {
 	implementation 'com.squareup.okhttp3:okhttp:4.11.0'
 	implementation 'org.telegram:telegrambots-spring-boot-starter:6.7.0'
 
+	//Kotlin
+	implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
 
 }
 

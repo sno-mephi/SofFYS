@@ -14,6 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 import ru.idfedorov09.telegram.bot.config.BotContainer
+import ru.idfedorov09.telegram.bot.util.OnReceiver
 import java.util.concurrent.Executors
 
 @Component
@@ -22,8 +23,6 @@ class TelegramPollingBot : TelegramLongPollingBot() {
     @Autowired
     private val botContainer: BotContainer? = null
     private val log = LoggerFactory.getLogger(this.javaClass)
-
-    private val updatingRequestDispatcher = Executors.newFixedThreadPool(Int.MAX_VALUE).asCoroutineDispatcher()
 
     init {
         log.info("Polling starting..")
@@ -35,11 +34,7 @@ class TelegramPollingBot : TelegramLongPollingBot() {
     }
 
     override fun onUpdateReceived(update: Update) {
-        var curObj = this
-        GlobalScope.launch(updatingRequestDispatcher) {
-            log.info("Update received: $update")
-            botContainer!!.updatesHandler.handle(curObj, update)
-        }
+        OnReceiver.onReceive(update, this, botContainer)
     }
 
     override fun getBotUsername(): String {

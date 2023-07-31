@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.idfedorov09.telegram.bot.config.BotContainer;
+import ru.idfedorov09.telegram.bot.util.OnReceiver;
 
 @Controller
 @ConditionalOnProperty(name = "telegram.bot.interaction-method", havingValue = "webhook", matchIfMissing = false)
@@ -42,8 +43,7 @@ public class TelegramWebhookBot{
     @ResponseStatus(value = HttpStatus.OK)
     public void handler(@RequestBody String jsonUpdate){
         Update update = gson.fromJson(jsonUpdate, Update.class);
-        log.info("Update received: "+update);
-        botContainer.updatesHandler.handle(executor, update);
+        OnReceiver.onReceive(update, executor, botContainer);
     }
 
 }

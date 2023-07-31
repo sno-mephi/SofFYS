@@ -30,7 +30,7 @@ public class UpdatesController extends UpdatesSender implements UpdatesHandler {
     private int cnt = 0;
 
     @Override
-    //@Async("linearThread")
+    @Async("linearThread")
     //@Async("infinityThread")
     public void handle(TelegramLongPollingBot telegramBot, Update update) {
         String chatId = updatesUtil.getChatId(update);

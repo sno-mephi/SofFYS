@@ -1,9 +1,6 @@
 package ru.idfedorov09.telegram.bot.entity
 
 import jakarta.annotation.PostConstruct
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -15,13 +12,17 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 import ru.idfedorov09.telegram.bot.config.BotContainer
 import ru.idfedorov09.telegram.bot.util.OnReceiver
-import java.util.concurrent.Executors
 
 @Component
 @ConditionalOnProperty(name = ["telegram.bot.interaction-method"], havingValue = "polling", matchIfMissing = true)
 class TelegramPollingBot : TelegramLongPollingBot() {
+
     @Autowired
     private val botContainer: BotContainer? = null
+
+    @Autowired
+    private val updateReceiver: OnReceiver? = null
+
     private val log = LoggerFactory.getLogger(this.javaClass)
 
     init {
@@ -34,7 +35,7 @@ class TelegramPollingBot : TelegramLongPollingBot() {
     }
 
     override fun onUpdateReceived(update: Update) {
-        OnReceiver.onReceive(update, this, botContainer)
+        updateReceiver!!.onReceive(update, this)
     }
 
     override fun getBotUsername(): String {

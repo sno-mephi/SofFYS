@@ -26,6 +26,9 @@ public class TelegramWebhookBot{
     private Executor executor;
 
     @Autowired
+    private OnReceiver onReceiver;
+
+    @Autowired
     private Gson gson;
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -43,7 +46,7 @@ public class TelegramWebhookBot{
     @ResponseStatus(value = HttpStatus.OK)
     public void handler(@RequestBody String jsonUpdate){
         Update update = gson.fromJson(jsonUpdate, Update.class);
-        OnReceiver.onReceive(update, executor, botContainer);
+        onReceiver.onReceive(update, executor);
     }
 
 }

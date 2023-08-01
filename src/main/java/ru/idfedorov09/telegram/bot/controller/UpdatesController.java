@@ -30,8 +30,7 @@ public class UpdatesController extends UpdatesSender implements UpdatesHandler {
     private int cnt = 0;
 
     @Override
-    @Async("linearThread")
-    //@Async("infinityThread")
+    //@Async("infinityThread") if u need full async execution
     public void handle(TelegramLongPollingBot telegramBot, Update update) {
         String chatId = updatesUtil.getChatId(update);
         String message = updatesUtil.getText(update);

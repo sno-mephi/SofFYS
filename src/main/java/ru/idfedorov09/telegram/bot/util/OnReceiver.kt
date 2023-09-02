@@ -1,5 +1,6 @@
 package ru.idfedorov09.telegram.bot.util
 
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -36,7 +37,7 @@ class OnReceiver {
 
     fun execOne(update: Update, executor: TelegramLongPollingBot?) {
         log.info("Update received: $update")
-        botContainer!!.updatesHandler.handle(executor, update)
+        botContainer.updatesHandler.handle(executor, update)
     }
 
     fun exec(update: Update, executor: TelegramLongPollingBot?) {
@@ -47,7 +48,7 @@ class OnReceiver {
             return
         }
 
-        val chatKey = updatesUtil!!.getChatKey(chatId)
+        val chatKey = updatesUtil.getChatKey(chatId)
 
         if (jedis.get(chatKey) == null) {
             jedis.set(chatKey, "1")
@@ -62,6 +63,8 @@ class OnReceiver {
             userQueue.push(update, chatId)
         }
     }
+
+    @OptIn(DelicateCoroutinesApi::class)
     fun onReceive(update: Update, executor: TelegramLongPollingBot?) {
         GlobalScope.launch(updatingRequestDispatcher) {
             exec(update, executor)

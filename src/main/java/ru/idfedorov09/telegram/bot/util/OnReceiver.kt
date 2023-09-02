@@ -6,6 +6,7 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.support.GenericApplicationContext
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -55,10 +56,8 @@ class OnReceiver {
             execOne(update, executor)
             jedis.del(chatKey)
 
-            val upd: Update? = userQueue.popUpdate(chatId)
-            if (upd != null) {
-                onReceive(upd, executor)
-            }
+            val upd: Update = userQueue.popUpdate(chatId)
+            onReceive(upd, executor)
         } else {
             userQueue.push(update, chatId)
         }

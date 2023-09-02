@@ -16,50 +16,50 @@ import java.util.concurrent.Executors
 @Component
 class OnReceiver {
 
-    private val log = LoggerFactory.getLogger(this.javaClass)
+    companion object {
+        private val log = LoggerFactory.getLogger(this.javaClass)
+    }
 
     @Autowired
-    private val botContainer: BotContainer? = null
+    private lateinit var botContainer: BotContainer
 
     @Autowired
-    private val jedis: Jedis? = null
+    private lateinit var jedis: Jedis
 
     @Autowired
-    private val updatesUtil: UpdatesUtil? = null
+    private lateinit var updatesUtil: UpdatesUtil
 
     @Autowired
-    private val userQueue: UserQueue? = null
+    private lateinit var userQueue: UserQueue
 
     private val updatingRequestDispatcher = Executors.newFixedThreadPool(Int.MAX_VALUE).asCoroutineDispatcher()
 
-    fun execOne(update: Update, executor: TelegramLongPollingBot?){
+    fun execOne(update: Update, executor: TelegramLongPollingBot?) {
         log.info("Update received: $update")
         botContainer!!.updatesHandler.handle(executor, update)
     }
 
-    fun exec(update: Update, executor: TelegramLongPollingBot?){
-        val chatId = updatesUtil!!.getChatId(update)
+    fun exec(update: Update, executor: TelegramLongPollingBot?) {
+        val chatId = updatesUtil.getChatId(update)
 
-        if(chatId==null){
+        if (chatId == null) {
             execOne(update, executor)
             return
         }
 
         val chatKey = updatesUtil!!.getChatKey(chatId)
 
-        if(jedis!!.get(chatKey)==null) {
-
-            jedis!!.set(chatKey, "1")
+        if (jedis.get(chatKey) == null) {
+            jedis.set(chatKey, "1")
             execOne(update, executor)
-            jedis!!.del(chatKey)
+            jedis.del(chatKey)
 
-            val upd: Update? = userQueue?.popUpdate(chatId)
-            if(upd!=null){
+            val upd: Update? = userQueue.popUpdate(chatId)
+            if (upd != null) {
                 onReceive(upd, executor)
             }
-        }
-        else{
-            userQueue?.push(update, chatId)
+        } else {
+            userQueue.push(update, chatId)
         }
     }
     fun onReceive(update: Update, executor: TelegramLongPollingBot?) {
@@ -67,5 +67,4 @@ class OnReceiver {
             exec(update, executor)
         }
     }
-
 }

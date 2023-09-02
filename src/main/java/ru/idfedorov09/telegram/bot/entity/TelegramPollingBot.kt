@@ -17,13 +17,15 @@ import ru.idfedorov09.telegram.bot.util.OnReceiver
 @ConditionalOnProperty(name = ["telegram.bot.interaction-method"], havingValue = "polling", matchIfMissing = true)
 class TelegramPollingBot : TelegramLongPollingBot() {
 
-    @Autowired
-    private val botContainer: BotContainer? = null
+    companion object {
+        private val log = LoggerFactory.getLogger(this.javaClass)
+    }
 
     @Autowired
-    private val updateReceiver: OnReceiver? = null
+    private lateinit var botContainer: BotContainer
 
-    private val log = LoggerFactory.getLogger(this.javaClass)
+    @Autowired
+    private lateinit var updateReceiver: OnReceiver
 
     init {
         log.info("Polling starting..")
@@ -35,35 +37,37 @@ class TelegramPollingBot : TelegramLongPollingBot() {
     }
 
     override fun onUpdateReceived(update: Update) {
-        updateReceiver!!.onReceive(update, this)
+        updateReceiver.onReceive(update, this)
     }
 
     override fun getBotUsername(): String {
-        return botContainer!!.BOT_NAME
+        return botContainer.BOT_NAME
     }
 
     override fun getBotToken(): String {
-        return botContainer!!.BOT_TOKEN
+        return botContainer.BOT_TOKEN
     }
 
     @PostConstruct
     fun botConnect() {
-        var telegramBotsApi: TelegramBotsApi? = null
+        lateinit var telegramBotsApi: TelegramBotsApi
+
         try {
             telegramBotsApi = TelegramBotsApi(DefaultBotSession::class.java)
         } catch (e: TelegramApiException) {
-            log.error("Can't create API: $e")
+            log.error("Can't create API: $e. Trying to reconnect..")
             botConnect()
         }
+
         try {
-            telegramBotsApi!!.registerBot(this)
-            log.error("TelegramAPI started. Look for messages")
+            telegramBotsApi.registerBot(this)
+            log.info("TelegramAPI started. Look for messages")
         } catch (e: TelegramApiException) {
-            log.error("Can't Connect. Pause " + botContainer!!.RECONNECT_PAUSE / 1000 + "sec and try again. Error: " + e.message)
+            log.error("Can't Connect. Pause " + botContainer.RECONNECT_PAUSE / 1000 + "sec and try again. Error: " + e.message)
             try {
                 Thread.sleep(botContainer.RECONNECT_PAUSE.toLong())
-            } catch (e1: InterruptedException) {
-                e1.printStackTrace()
+            } catch (threadError: InterruptedException) {
+                log.error(threadError.message)
                 return
             }
             botConnect()

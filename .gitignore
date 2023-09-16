@@ -41,3 +41,5 @@ out/
 
 /gradle/
 /src/main/resources/application.properties
+
+.DS_STORE

@@ -55,8 +55,8 @@ class OnReceiver {
             execOne(update, executor)
             jedis.del(chatKey)
 
-            val upd: Update = userQueue.popUpdate(chatId)
-            onReceive(upd, executor)
+            val upd: Update? = userQueue.popUpdate(chatId)
+            upd?.let { onReceive(upd, executor) }
         } else {
             userQueue.push(update, chatId)
         }

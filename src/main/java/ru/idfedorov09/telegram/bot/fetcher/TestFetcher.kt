@@ -1,14 +1,15 @@
 package ru.idfedorov09.telegram.bot.fetcher
 
-import org.springframework.stereotype.Component
 import ru.idfedorov09.telegram.bot.flow.InjectData
 
-@Component
 class TestFetcher : GeneralFetcher() {
 
+    private var num = 0
+
     @InjectData
-    fun doFetch(a: String): String {
+    fun doFetch(a: String?): String {
+        num++
         println(a)
-        return "test fetcher!"
+        return "test fetcher: $num"
     }
 }

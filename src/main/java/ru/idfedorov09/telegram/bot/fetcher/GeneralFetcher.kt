@@ -1,22 +1,21 @@
 package ru.idfedorov09.telegram.bot.fetcher
 
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 import ru.idfedorov09.telegram.bot.flow.FlowContext
 import ru.idfedorov09.telegram.bot.flow.InjectData
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.javaType
 
+// TODO: нормально заинжектить flowContext
+@Component
 open class GeneralFetcher {
-
-    @Autowired
-    private lateinit var flowContext: FlowContext
 
     /**
      * Метод, который запускает метод помеченный как @InjectData,
      * внедряя в него нужные бины из контекста
      */
-    fun fetchMechanics() {
+    fun fetchMechanics(flowContext: FlowContext) {
         val methods = this::class.declaredMemberFunctions
 
         // TODO: обработать случай когда методов несколько (ошибка)

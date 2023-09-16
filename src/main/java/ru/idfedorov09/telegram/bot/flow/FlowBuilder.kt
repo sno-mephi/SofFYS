@@ -1,9 +1,18 @@
 package ru.idfedorov09.telegram.bot.flow
 
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import org.slf4j.LoggerFactory
 import ru.idfedorov09.telegram.bot.fetcher.GeneralFetcher
 
 class FlowBuilder {
-    var currentNode: FlowNode? = FlowNode(
+
+    companion object {
+        private val log = LoggerFactory.getLogger(this.javaClass)
+    }
+
+    private var currentNode: FlowNode = FlowNode(
         GeneralFetcher(),
         mutableListOf(),
         mutableListOf(),
@@ -12,21 +21,49 @@ class FlowBuilder {
 
     fun group(action: () -> Unit) {
         val lastStateNode = currentNode
-        currentNode = currentNode?.addGroupNode()
+        currentNode = currentNode.addGroupNode()
         action()
         currentNode = lastStateNode
     }
 
     fun whenComplete(action: () -> Unit) {
         val lastStateNode = currentNode
-        currentNode = currentNode?.addWaitNode()
+        currentNode = currentNode.addWaitNode()
         action()
         currentNode = lastStateNode
     }
 
     fun fetch(fetcherInstance: GeneralFetcher) {
-        fetcherInstance.fetchMechanics() // вызывает метод фетчера, помеченный аннотацией @InjectData
-        currentNode?.addFetcher(fetcherInstance)
-        println()
+        // fetcherInstance.fetchMechanics() // вызывает метод фетчера, помеченный аннотацией @InjectData
+        // вызываться должно после построения графа!
+        currentNode.addFetcher(fetcherInstance)
+    }
+
+    suspend fun run(
+        node: FlowNode = currentNode,
+        flowContext: FlowContext
+    ) {
+        coroutineScope {
+            val toRun = mutableListOf<GeneralFetcher>()
+            node.children.forEach { children ->
+                // TODO: NodeType.FETCHER гарантирует ненулевой фетчер
+                if (children.nodeType == NodeType.FETCHER) {
+                    toRun.add(children.fetcher!!)
+                } else if (children.nodeType == NodeType.WAIT) {
+                    runBlocking {
+                        toRun.forEach {
+                            launch { it.fetchMechanics(flowContext) }
+                        }
+                    }
+                    toRun.clear()
+                } else {
+                    launch { run(children, flowContext) }
+                }
+            }
+            toRun.forEach {
+                launch { it.fetchMechanics(flowContext) }
+            }
+            toRun.clear()
+        }
     }
 }

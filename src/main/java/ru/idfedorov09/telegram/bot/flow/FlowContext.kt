@@ -1,11 +1,16 @@
 package ru.idfedorov09.telegram.bot.flow
 
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
-class FlowContext {
-
+class FlowContext(
     private val contextMap: MutableMap<String, Any?> = mutableMapOf()
+) {
+
+    companion object {
+        private val log = LoggerFactory.getLogger(this.javaClass)
+    }
 
     /**
      * Добавляет в контекст объект, если он не нулевой
@@ -18,11 +23,18 @@ class FlowContext {
     }
 
     /**
-     * Извлекает из контекста объект по типу, если такой есть
+     * Извлекает из контекста объект по типу, если такой есть; если нет то возвращается null
      */
-    // TODO: обработка исключения при ненайденном типе
-    fun getBeanByType(clazz: Class<*>): Any? {
+    open fun getBeanByType(clazz: Class<*>): Any? {
+        if (!containsBeanByType(clazz)) {
+            log.warn("Context doesn't contains object with type ${clazz.name}")
+            return null
+        }
         return contextMap[clazz.name]
+    }
+
+    fun containsBeanByType(clazz: Class<*>): Boolean {
+        return contextMap.contains(clazz.name)
     }
 
     /**

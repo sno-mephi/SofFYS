@@ -1,7 +1,6 @@
 package ru.idfedorov09.telegram.bot.service;
 
 import com.google.gson.Gson;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;

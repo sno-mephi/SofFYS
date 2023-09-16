@@ -35,12 +35,12 @@ class OnReceiver {
 
     private val updatingRequestDispatcher = Executors.newFixedThreadPool(Int.MAX_VALUE).asCoroutineDispatcher()
 
-    fun execOne(update: Update, executor: TelegramLongPollingBot?) {
+    private fun execOne(update: Update, executor: TelegramLongPollingBot?) {
         log.info("Update received: $update")
         botContainer.updatesHandler.handle(executor, update)
     }
 
-    fun exec(update: Update, executor: TelegramLongPollingBot?) {
+    private fun exec(update: Update, executor: TelegramLongPollingBot?) {
         val chatId = updatesUtil.getChatId(update)
 
         if (chatId == null) {

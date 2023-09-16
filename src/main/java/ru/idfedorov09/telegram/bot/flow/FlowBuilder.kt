@@ -41,7 +41,7 @@ class FlowBuilder {
 
     suspend fun run(
         node: FlowNode = currentNode,
-        flowContext: FlowContext
+        flowContext: FlowContext,
     ) {
         coroutineScope {
             val toRun = mutableListOf<GeneralFetcher>()

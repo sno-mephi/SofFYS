@@ -11,9 +11,6 @@ import ru.idfedorov09.telegram.bot.fetcher.TestFetcher
 @Configuration
 open class FlowConfiguration {
 
-    @Autowired
-    private lateinit var flowContext: FlowContext
-
     /**
      * Возвращает построенный граф; выполняется только при запуске приложения
      */

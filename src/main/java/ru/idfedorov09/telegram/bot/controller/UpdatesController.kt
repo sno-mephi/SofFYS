@@ -12,14 +12,10 @@ import ru.idfedorov09.telegram.bot.UpdatesHandler
 import ru.idfedorov09.telegram.bot.UpdatesSender
 import ru.idfedorov09.telegram.bot.flow.FlowBuilder
 import ru.idfedorov09.telegram.bot.flow.FlowContext
-import ru.idfedorov09.telegram.bot.util.UpdatesUtil
 import java.util.concurrent.Executors
 
 @Component
 class UpdatesController : UpdatesSender(), UpdatesHandler {
-
-    @Autowired
-    private lateinit var updatesUtil: UpdatesUtil
 
     @Autowired
     private lateinit var flowBuilder: FlowBuilder

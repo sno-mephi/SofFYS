@@ -3,6 +3,7 @@ package ru.idfedorov09.telegram.bot.controller
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -43,8 +44,8 @@ class UpdatesController : UpdatesSender(), UpdatesHandler {
         flowContext.insertObject(update)
 
         toContext().forEach { flowContext.insertObject(it) }
-        // TODO: GlobalScope?? Реально???
-        GlobalScope.launch(flowDispatcher) {
+
+        runBlocking {
             flowBuilder.run(
                 flowContext = flowContext,
             )

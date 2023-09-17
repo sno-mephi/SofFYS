@@ -1,8 +1,9 @@
 package ru.idfedorov09.telegram.bot.flow
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import ru.idfedorov09.telegram.bot.fetcher.GeneralFetcher
 
@@ -50,12 +51,10 @@ class FlowBuilder {
                 if (children.nodeType == NodeType.FETCHER) {
                     toRun.add(children.fetcher!!)
                 } else if (children.nodeType == NodeType.WAIT) {
-                    runBlocking {
-                        toRun.forEach {
-                            launch { it.fetchMechanics(flowContext) }
-                        }
-                    }
+                    val completedRun = toRun.map { async { it.fetchMechanics(flowContext) } }
+                    completedRun.awaitAll()
                     toRun.clear()
+                    launch { run(children, flowContext) }
                 } else {
                     launch { run(children, flowContext) }
                 }

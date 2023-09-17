@@ -12,6 +12,7 @@ import ru.idfedorov09.telegram.bot.UpdatesHandler
 import ru.idfedorov09.telegram.bot.UpdatesSender
 import ru.idfedorov09.telegram.bot.flow.FlowBuilder
 import ru.idfedorov09.telegram.bot.flow.FlowContext
+import ru.idfedorov09.telegram.bot.util.UpdatesUtil
 import java.util.concurrent.Executors
 
 @Component
@@ -21,7 +22,7 @@ class UpdatesController : UpdatesSender(), UpdatesHandler {
     private lateinit var flowBuilder: FlowBuilder
 
     @Autowired
-    private lateinit var flowContext: FlowContext
+    private lateinit var updatesUtil: UpdatesUtil
 
     private val flowDispatcher = Executors.newFixedThreadPool(Int.MAX_VALUE).asCoroutineDispatcher()
 
@@ -29,13 +30,26 @@ class UpdatesController : UpdatesSender(), UpdatesHandler {
         private val log = LoggerFactory.getLogger(this.javaClass)
     }
 
+    private fun toContext() = listOf<Any>(
+        updatesUtil,
+    )
+
     // @Async("infinityThread") // if u need full async execution
     override fun handle(telegramBot: TelegramLongPollingBot, update: Update) {
-        // TODO: положить telegramBot, update в граф
+        // Во время каждой прогонки графа создается свой контекст,
+        // в который кладется бот и само обновление
+        var flowContext = FlowContext()
+        flowContext.insertObject(telegramBot)
+        flowContext.insertObject(update)
+
+        toContext().forEach { flowContext.insertObject(it) }
+        // TODO: GlobalScope?? Реально???
         GlobalScope.launch(flowDispatcher) {
             flowBuilder.run(
                 flowContext = flowContext,
             )
+            // TODO: подумать, что сделать с этим; возможно, это лишнее действие
+            flowContext.clear()
         }
     }
 }

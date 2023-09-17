@@ -1,9 +1,7 @@
 package ru.idfedorov09.telegram.bot.flow
 
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
 
-@Component
 class FlowContext(
     private val contextMap: MutableMap<String, Any?> = mutableMapOf()
 ) {

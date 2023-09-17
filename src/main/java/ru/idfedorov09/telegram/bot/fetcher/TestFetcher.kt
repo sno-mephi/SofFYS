@@ -1,15 +1,31 @@
 package ru.idfedorov09.telegram.bot.fetcher
 
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText
+import org.telegram.telegrambots.meta.api.objects.Update
+import ru.idfedorov09.telegram.bot.entity.TelegramPollingBot
 import ru.idfedorov09.telegram.bot.flow.InjectData
+import ru.idfedorov09.telegram.bot.util.UpdatesUtil
 
-class TestFetcher : GeneralFetcher() {
-
-    private var num = 0
+class TestFetcher(
+    private val marker: String = "default",
+) : GeneralFetcher() {
 
     @InjectData
-    fun doFetch(a: String?): String {
-        num++
-        println(a)
-        return "test fetcher: $num"
+    fun doFetch(
+        update: Update?,
+        bot: TelegramPollingBot,
+        updatesUtil: UpdatesUtil,
+    ) {
+        val chatId: String = updatesUtil.getChatId(update)
+        val message: String = updatesUtil.getText(update)
+
+        val sent = bot.execute(SendMessage(chatId, "[$marker] test fetcher run... ⏳"))
+        val editMessageText = EditMessageText()
+        editMessageText.chatId = chatId
+        editMessageText.messageId = sent.messageId
+        editMessageText.text = "[$marker] test fetcher finished! ✅"
+        Thread.sleep(1500L)
+        bot.execute(editMessageText)
     }
 }

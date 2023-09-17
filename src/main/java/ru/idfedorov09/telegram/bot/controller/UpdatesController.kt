@@ -45,12 +45,17 @@ class UpdatesController : UpdatesSender(), UpdatesHandler {
 
         toContext().forEach { flowContext.insertObject(it) }
 
-        runBlocking {
+        val flowJob = GlobalScope.launch {
             flowBuilder.run(
                 flowContext = flowContext,
             )
             // TODO: подумать, что сделать с этим; возможно, это лишнее действие
             flowContext.clear()
+        }
+
+        // ожидаем, когда граф прогонится
+        runBlocking {
+            flowJob.join()
         }
     }
 }

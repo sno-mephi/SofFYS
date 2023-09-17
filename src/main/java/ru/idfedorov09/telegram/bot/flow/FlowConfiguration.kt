@@ -26,20 +26,31 @@ open class FlowConfiguration {
     private val testFetcher4 = TestFetcher("4")
     private val testFetcher5 = TestFetcher("5")
     private val testFetcher6 = TestFetcher("6")
+    private val testFetcherStart = TestFetcher("STAAAAART!!!")
 
     private fun FlowBuilder.buildFlow() {
         group {
-            fetch(testFetcher1)
-            group {
+            fetch(testFetcherStart)
+            whenComplete {
+                fetch(testFetcher1)
+            }
+            whenComplete {
                 fetch(testFetcher2)
                 fetch(testFetcher3)
                 whenComplete {
-                    fetch(testFetcher4)
-                }
-                fetch(testFetcher5)
-                whenComplete {
                     fetch(testFetcher6)
                 }
+            }
+            whenComplete {
+                fetch(testFetcher4)
+            }
+            group {
+                fetch(testFetcher1)
+                fetch(testFetcher1)
+                fetch(testFetcher1)
+            }
+            whenComplete {
+                fetch(testFetcher5)
             }
         }
     }

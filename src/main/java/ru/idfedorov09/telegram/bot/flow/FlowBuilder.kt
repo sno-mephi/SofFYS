@@ -45,22 +45,34 @@ class FlowBuilder {
         flowContext: FlowContext,
     ) {
         coroutineScope {
-            val toRun = mutableListOf<GeneralFetcher>()
+            val toRun = mutableListOf<Any>()
             node.children.forEach { children ->
                 // TODO: NodeType.FETCHER гарантирует ненулевой фетчер
                 if (children.nodeType == NodeType.FETCHER) {
                     toRun.add(children.fetcher!!)
+                } else if (children.nodeType == NodeType.GROUP) {
+                    toRun.add(children)
                 } else if (children.nodeType == NodeType.WAIT) {
-                    val completedRun = toRun.map { async { it.fetchMechanics(flowContext) } }
+                    val completedRun = toRun.map {
+                        async {
+                            when (it) {
+                                is GeneralFetcher -> it.fetchMechanics(flowContext)
+                                is FlowNode -> run(it, flowContext)
+                            }
+                        }
+                    }
                     completedRun.awaitAll()
                     toRun.clear()
-                    launch { run(children, flowContext) }
-                } else {
-                    launch { run(children, flowContext) }
+                    toRun.add(children)
                 }
             }
             toRun.forEach {
-                launch { it.fetchMechanics(flowContext) }
+                launch {
+                    when (it) {
+                        is GeneralFetcher -> it.fetchMechanics(flowContext)
+                        is FlowNode -> run(it, flowContext)
+                    }
+                }
             }
             toRun.clear()
         }

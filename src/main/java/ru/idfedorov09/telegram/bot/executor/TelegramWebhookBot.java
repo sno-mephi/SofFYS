@@ -1,4 +1,4 @@
-package ru.idfedorov09.telegram.bot.entity;
+package ru.idfedorov09.telegram.bot.executor;
 
 import com.google.gson.Gson;
 import jakarta.annotation.PostConstruct;

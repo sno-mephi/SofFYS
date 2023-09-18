@@ -1,6 +1,6 @@
 package ru.idfedorov09.telegram.bot.flow
 
-import ru.idfedorov09.telegram.bot.enums.BotStage
+import ru.idfedorov09.telegram.bot.data.enums.BotStage
 
 /**
  * Объект контекста флоу, содержащий информацию о работающих фичах, режимах и тд и тп

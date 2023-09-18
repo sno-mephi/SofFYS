@@ -13,6 +13,7 @@ import ru.idfedorov09.telegram.bot.UpdatesHandler
 import ru.idfedorov09.telegram.bot.UpdatesSender
 import ru.idfedorov09.telegram.bot.flow.FlowBuilder
 import ru.idfedorov09.telegram.bot.flow.FlowContext
+import ru.idfedorov09.telegram.bot.service.RedisService
 import ru.idfedorov09.telegram.bot.util.UpdatesUtil
 import java.util.concurrent.Executors
 
@@ -25,6 +26,9 @@ class UpdatesController : UpdatesSender(), UpdatesHandler {
     @Autowired
     private lateinit var updatesUtil: UpdatesUtil
 
+    @Autowired
+    private lateinit var redisService: RedisService
+
     private val flowDispatcher = Executors.newFixedThreadPool(Int.MAX_VALUE).asCoroutineDispatcher()
 
     companion object {
@@ -33,6 +37,7 @@ class UpdatesController : UpdatesSender(), UpdatesHandler {
 
     private fun toContext() = listOf<Any>(
         updatesUtil,
+        redisService,
     )
 
     // @Async("infinityThread") // if u need full async execution

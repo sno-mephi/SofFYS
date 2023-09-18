@@ -2,8 +2,8 @@ package ru.idfedorov09.telegram.bot.flow
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import ru.idfedorov09.telegram.bot.enums.BotStage
-import ru.idfedorov09.telegram.bot.fetcher.TestFetcher
+import ru.idfedorov09.telegram.bot.fetcher.MessageLogFetcher
+import ru.idfedorov09.telegram.bot.fetcher.StageResolveFetcher
 
 /**
  * Основной класс, в котором строится последовательность вычислений (граф)
@@ -21,13 +21,15 @@ open class FlowConfiguration {
         return flowBuilder
     }
 
-    private val testFetcher1 = TestFetcher("1")
-    private val testFetcherStart = TestFetcher("START")
+    private val stageResolveFetcher = StageResolveFetcher()
+    private val messageLogFetcher = MessageLogFetcher()
 
     private fun FlowBuilder.buildFlow() {
-        group(condition = { exp.botStage == BotStage.OFFLINE }) {
-            fetch(testFetcher1)
-            whenComplete { fetch(testFetcherStart) }
+        group {
+            fetch(stageResolveFetcher)
+            whenComplete {
+                fetch(messageLogFetcher)
+            }
         }
     }
 }

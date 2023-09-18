@@ -1,4 +1,4 @@
-package ru.idfedorov09.telegram.bot.entity
+package ru.idfedorov09.telegram.bot.executor
 
 import jakarta.annotation.PostConstruct
 import org.slf4j.LoggerFactory

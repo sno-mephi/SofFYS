@@ -1,4 +1,4 @@
-package ru.idfedorov09.telegram.bot.entity;
+package ru.idfedorov09.telegram.bot.executor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

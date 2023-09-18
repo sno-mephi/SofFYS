@@ -44,6 +44,10 @@ class FlowBuilder {
         node: FlowNode = currentNode,
         flowContext: FlowContext,
     ) {
+        // Если в текущем флоу отсутствует ExpContains, то добавляем его!
+        if (!flowContext.containsBeanByType(ExpContainer::class.java)){
+            flowContext.insertObject(ExpContainer())
+        }
         coroutineScope {
             val toRun = mutableListOf<Any>()
             node.children.forEach { children ->

@@ -2,7 +2,7 @@ package ru.idfedorov09.telegram.bot.flow
 
 import org.slf4j.LoggerFactory
 
-class FlowContext(
+data class FlowContext(
     private val contextMap: MutableMap<String, Any?> = mutableMapOf()
 ) {
 

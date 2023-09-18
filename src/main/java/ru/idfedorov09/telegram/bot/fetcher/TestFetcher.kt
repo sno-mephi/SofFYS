@@ -13,10 +13,10 @@ class TestFetcher(
 
     @InjectData
     fun doFetch(
-        update: Update?,
+        update: Update,
         bot: TelegramPollingBot,
         updatesUtil: UpdatesUtil,
-    ) {
+    ): Update {
         val chatId: String = updatesUtil.getChatId(update)
         val message: String = updatesUtil.getText(update)
 
@@ -27,5 +27,9 @@ class TestFetcher(
         editMessageText.text = "[$marker] test fetcher finished! ✅"
         Thread.sleep(1500L)
         bot.execute(editMessageText)
+        bot.execute(SendMessage(chatId, "[$marker] $message"))
+
+        update.message?.text = "test edit text!"
+        return update
     }
 }

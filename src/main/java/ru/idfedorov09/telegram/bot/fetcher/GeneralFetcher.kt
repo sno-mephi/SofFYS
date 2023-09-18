@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import ru.idfedorov09.telegram.bot.flow.FlowContext
 import ru.idfedorov09.telegram.bot.flow.InjectData
+import ru.idfedorov09.telegram.bot.flow.Mutable
 import java.io.*
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
@@ -39,12 +40,17 @@ open class GeneralFetcher {
                     .let { it.subList(1, it.size) }
                     .forEach { paramType ->
                         val injectedObject = flowContext.getBeanByType(paramType)
-                        params.add(
-                            clone(injectedObject),
-                        )
+                        // если мы отметили тип как изменяемый (@Mutable), то позволяем его менять во время выполнения
+                        if (paramType.kotlin.hasAnnotation<Mutable>()) {
+                            params.add(injectedObject)
+                        } else {
+                            params.add(
+                                clone(injectedObject),
+                            )
 
-                        if (injectedObject != null && !isCloneable(injectedObject)) {
-                            nonCloneableObjects.add(injectedObject)
+                            if (injectedObject != null && !isCloneable(injectedObject)) {
+                                nonCloneableObjects.add(injectedObject)
+                            }
                         }
                     }
 

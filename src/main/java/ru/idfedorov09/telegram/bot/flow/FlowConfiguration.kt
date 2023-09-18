@@ -24,7 +24,7 @@ open class FlowConfiguration {
     private val testFetcherStart = TestFetcher("START")
 
     private fun FlowBuilder.buildFlow() {
-        group {
+        group(condition = { exp.isAppeal }) {
             fetch(testFetcherStart)
             whenComplete { fetch(testFetcher1) }
         }

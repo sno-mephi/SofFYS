@@ -13,6 +13,8 @@ class FlowBuilder {
         private val log = LoggerFactory.getLogger(this.javaClass)
     }
 
+    var exp: ExpContainer = ExpContainer()
+
     private var currentNode: FlowNode = FlowNode(
         GeneralFetcher(),
         mutableListOf(),
@@ -20,14 +22,20 @@ class FlowBuilder {
         NodeType.GROUP,
     )
 
-    fun group(action: () -> Unit) {
+    fun group(
+        condition: (ExpContainer) -> Boolean = { true },
+        action: () -> Unit,
+    ) {
         val lastStateNode = currentNode
         currentNode = currentNode.addGroupNode()
         action()
         currentNode = lastStateNode
     }
 
-    fun whenComplete(action: () -> Unit) {
+    fun whenComplete(
+        condition: (ExpContainer) -> Boolean = { true },
+        action: () -> Unit,
+    ) {
         val lastStateNode = currentNode
         currentNode = currentNode.addWaitNode()
         action()
@@ -44,8 +52,9 @@ class FlowBuilder {
         node: FlowNode = currentNode,
         flowContext: FlowContext,
     ) {
-        // Если в текущем флоу отсутствует ExpContains, то добавляем его!
-        if (!flowContext.containsBeanByType(ExpContainer::class.java)){
+        exp = ExpContainer()
+        // кладем эксп в контекст, чтобы была возможность менять его по ходу выполнения графа
+        if (!flowContext.containsBeanByType(ExpContainer::class.java)) {
             flowContext.insertObject(ExpContainer())
         }
         coroutineScope {

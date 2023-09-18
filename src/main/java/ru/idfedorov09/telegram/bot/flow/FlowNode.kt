@@ -7,6 +7,7 @@ class FlowNode(
     val children: MutableList<FlowNode>,
     val parents: MutableList<FlowNode>,
     val nodeType: NodeType,
+    val condition: (ExpContainer) -> Boolean = { true },
 ) {
 
     fun addParentNode(parentNode: FlowNode) {
@@ -34,6 +35,7 @@ class FlowNode(
         children: MutableList<FlowNode> = mutableListOf(),
         parents: MutableList<FlowNode> = mutableListOf(this),
         nodeType: NodeType,
+        condition: (ExpContainer) -> Boolean
     ): FlowNode {
         return addChildrenNode(
             FlowNode(
@@ -41,19 +43,26 @@ class FlowNode(
                 children = children,
                 parents = parents,
                 nodeType = nodeType,
+                condition = condition
             ),
         )
     }
 
-    fun addWaitNode(): FlowNode {
+    fun addWaitNode(
+        condition: (ExpContainer) -> Boolean
+    ): FlowNode {
         return addWGNode(
             nodeType = NodeType.WAIT,
+            condition = condition
         )
     }
 
-    fun addGroupNode(): FlowNode {
+    fun addGroupNode(
+        condition: (ExpContainer) -> Boolean
+    ): FlowNode {
         return addWGNode(
             nodeType = NodeType.GROUP,
+            condition = condition
         )
     }
 }

@@ -27,7 +27,7 @@ class FlowBuilder {
         action: () -> Unit,
     ) {
         val lastStateNode = currentNode
-        currentNode = currentNode.addGroupNode()
+        currentNode = currentNode.addGroupNode(condition)
         action()
         currentNode = lastStateNode
     }
@@ -37,7 +37,7 @@ class FlowBuilder {
         action: () -> Unit,
     ) {
         val lastStateNode = currentNode
-        currentNode = currentNode.addWaitNode()
+        currentNode = currentNode.addWaitNode(condition)
         action()
         currentNode = lastStateNode
     }
@@ -70,7 +70,7 @@ class FlowBuilder {
                         async {
                             when (it) {
                                 is GeneralFetcher -> it.fetchMechanics(flowContext)
-                                is FlowNode -> run(it, flowContext)
+                                is FlowNode -> if (it.condition.invoke(exp)) run(it, flowContext)
                             }
                         }
                     }
@@ -83,7 +83,7 @@ class FlowBuilder {
                 launch {
                     when (it) {
                         is GeneralFetcher -> it.fetchMechanics(flowContext)
-                        is FlowNode -> run(it, flowContext)
+                        is FlowNode -> if (it.condition.invoke(exp)) run(it, flowContext)
                     }
                 }
             }

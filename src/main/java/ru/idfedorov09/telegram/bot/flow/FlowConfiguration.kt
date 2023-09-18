@@ -2,6 +2,7 @@ package ru.idfedorov09.telegram.bot.flow
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import ru.idfedorov09.telegram.bot.enums.BotStage
 import ru.idfedorov09.telegram.bot.fetcher.TestFetcher
 
 /**
@@ -24,9 +25,9 @@ open class FlowConfiguration {
     private val testFetcherStart = TestFetcher("START")
 
     private fun FlowBuilder.buildFlow() {
-        group(condition = { exp.isAppeal }) {
-            fetch(testFetcherStart)
-            whenComplete { fetch(testFetcher1) }
+        group(condition = { exp.botStage == BotStage.OFFLINE }) {
+            fetch(testFetcher1)
+            whenComplete { fetch(testFetcherStart) }
         }
     }
 }

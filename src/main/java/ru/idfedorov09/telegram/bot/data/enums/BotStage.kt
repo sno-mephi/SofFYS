@@ -8,5 +8,12 @@ enum class BotStage {
     GAME,
     APPEAL,
     AFTER_APPEAL,
-    OFFLINE
+    OFFLINE,
+    ;
+
+    companion object {
+        fun contains(
+            stringValue: String,
+        ) = BotStage.values().map { it.name }.contains(stringValue)
+    }
 }

@@ -9,6 +9,7 @@ import ru.idfedorov09.telegram.bot.data.model.UserResponse
 import ru.idfedorov09.telegram.bot.flow.ExpContainer
 import ru.idfedorov09.telegram.bot.flow.InjectData
 import ru.idfedorov09.telegram.bot.util.UpdatesUtil
+import java.time.LocalDateTime
 
 /**
  * Фетчер обрабатывающий сообщения-команды и заносящий информацию о них в контекст,
@@ -20,16 +21,24 @@ class CommandValidateResponseFetcher : GeneralFetcher() {
         private val log = LoggerFactory.getLogger(this.javaClass)
     }
 
+    private lateinit var update: Update
+    private var message: String? = null
+
     @InjectData
     fun doFetch(
         update: Update,
         updatesUtil: UpdatesUtil,
         exp: ExpContainer,
     ): UserResponse? {
+        val currentTime = LocalDateTime.now()
         val message = updatesUtil.getText(update)?.lowercase()
         val command = message?.split(" ")?.get(0)
         val chatId = updatesUtil.getChatId(update)
 
+        this.update = update
+        this.message = message
+
+        // TODO: а что если нажата кнопка? message==null по идее. подумать!
         if (message == null || chatId == null) return null
 
         val isOtherCommand = ResponseAction.entries
@@ -37,20 +46,29 @@ class CommandValidateResponseFetcher : GeneralFetcher() {
             .contains(command)
 
         val userResponse = when {
-            isProblemSelect() -> UserResponse(
-                getUserInfo(),
-                UserResponseType.MESSAGE_RESPONSE,
-                ResponseAction.SELECT_PROBLEM,
+            isProblemSelect(message) -> UserResponse(
+                initiator = getUserInfo(),
+                userResponseType = UserResponseType.MESSAGE_RESPONSE,
+                action = ResponseAction.SELECT_PROBLEM,
+                receiveTime = currentTime,
+                problemId = extractProblemId(),
+                answer = null,
             )
             isAnswerToProblem() -> UserResponse(
-                getUserInfo(),
-                getAnswerType(update),
-                ResponseAction.SEND_ANSWER,
+                initiator = getUserInfo(),
+                userResponseType = extractAnswerType(),
+                action = ResponseAction.SEND_ANSWER,
+                receiveTime = currentTime,
+                problemId = extractProblemId(),
+                answer = extractAnswer(),
             )
             isOtherCommand -> UserResponse(
-                getUserInfo(),
-                UserResponseType.MESSAGE_RESPONSE,
-                ResponseAction.valueOf(command!!),
+                initiator = getUserInfo(),
+                userResponseType = UserResponseType.MESSAGE_RESPONSE,
+                action = ResponseAction.valueOf(command!!),
+                receiveTime = currentTime,
+                problemId = extractProblemId(),
+                answer = null,
             )
             else -> null
         }
@@ -59,19 +77,50 @@ class CommandValidateResponseFetcher : GeneralFetcher() {
         return userResponse?.also { exp.IS_VALID_COMMAND = true }
     }
 
-    // TODO: дописать (регулярки)
-    private fun isProblemSelect(): Boolean {
-        return false
+    /**
+     * Проверка того что сообщение содержит задачу, те имеет вид
+     * ```русское_слово число_кратное_100 некоторый текст```
+     */
+    private fun isMessageContainsProblem(message: String?): Boolean {
+        message ?: return false
+
+        val matchResult = Regex("""^\p{IsCyrillic}+\s\d+.*$""").find(message) ?: return false
+        val number = matchResult.value.split(" ")[1].toInt()
+
+        return number % 100 == 0 && number in 100..1100
     }
 
-    // TODO: дописать (регулярки / проверка на isReply)
+    /**
+     * проверяет что сообщение имеет вид
+     * ```русское_слово число_кратное_100```
+     */
+    private fun isProblemSelect(message: String?): Boolean {
+        message ?: return false
+        if (!isMessageContainsProblem(message)) return false
+        return message.matches(Regex("""^\p{IsCyrillic}+\s\d+$"""))
+    }
+
+    // TODO: дописать для случая REPLY
+    private fun extractProblemId(): Long? {
+        message ?: return null
+        if (!isMessageContainsProblem(message)) return null
+
+        return message!!.split(" ")[1].toLongOrNull()
+    }
+
+    // TODO: дописать для случая REPLY
+    private fun extractAnswer(): String? {
+        return message?.split(" ")?.drop(2)?.joinToString(" ")
+    }
+
+    // TODO: дописать для случая REPLY
     private fun isAnswerToProblem(): Boolean {
-        return false
+        return isMessageContainsProblem(message) && !isProblemSelect(message)
     }
 
-    // TODO: дописать
-    private fun getAnswerType(update: Update): UserResponseType {
-        return UserResponseType.REPLY_RESPONSE
+    // TODO: дописать для случая REPLY
+    private fun extractAnswerType(): UserResponseType {
+        return UserResponseType.MESSAGE_RESPONSE
     }
 
     // TODO: попробовать потянуть из бд, если пусто то зарегать!

@@ -14,11 +14,11 @@ data class Team(
     val teamName: String? = null,
 
     @ElementCollection
-    @Column(name = "current_problems", columnDefinition = "INTEGER[]")
+    @Column(name = "current_problems", columnDefinition = "BIGINT[]")
     val problemsPool: List<Long> = mutableListOf(),
 
     @ElementCollection
-    @Column(name = "completed_problems", columnDefinition = "INTEGER[]")
+    @Column(name = "completed_problems", columnDefinition = "BIGINT[]")
     val completedProblems: List<Long> = mutableListOf(),
 
     /**

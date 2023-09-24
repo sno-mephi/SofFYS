@@ -14,12 +14,12 @@ data class Team(
     val teamName: String? = null,
 
     @ElementCollection
-    @Column(name = "current_problems", columnDefinition = "INTEGER[]")
-    val problemsPool: List<Int> = mutableListOf(),
+    @Column(name = "current_problems", columnDefinition = "BIGINT[]")
+    val problemsPool: List<Long> = mutableListOf(),
 
     @ElementCollection
-    @Column(name = "completed_problems", columnDefinition = "INTEGER[]")
-    val completedProblems: List<Int> = mutableListOf(),
+    @Column(name = "completed_problems", columnDefinition = "BIGINT[]")
+    val completedProblems: List<Long> = mutableListOf(),
 
     /**
      * Хэш тг картинки доски команды

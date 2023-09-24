@@ -13,8 +13,11 @@ data class Problem(
     @Column(name = "id")
     val id: Long = -1,
 
-    @Column(name = "name", columnDefinition = "TEXT")
-    val name: String? = null,
+    @Column(name = "category", columnDefinition = "TEXT")
+    val category: String? = null,
+
+    @Column(name = "cost")
+    val cost: Long? = null,
 
     @ElementCollection
     @Column(name = "answers", columnDefinition = "TEXT[]")

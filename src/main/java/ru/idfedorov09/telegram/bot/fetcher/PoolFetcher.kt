@@ -20,12 +20,15 @@ class PoolFetcher(
         bot: TelegramPollingBot,
     ) {
         val problemsPool = userResponse.initiatorTeam?.problemsPool ?: return
-        var resultString = ""
-        problemsPool.forEach {
-            val problem = problemRepository.findById(it).get()
-            resultString += "${problem.category} ${problem.cost}\n"
+        var i = 1
+        problemsPool.forEach { probId ->
+            val problem = problemRepository.findById(probId).get()
+
+            val tui = userResponse.initiator.tui ?: return
+
+            bot.execute(SendMessage(tui, "i" + "'${problem.category} ${problem.cost}'").also { it.enableMarkdown(true) })
+
+            i++
         }
-        val tui = userResponse.initiator.tui ?: return
-        bot.execute(SendMessage(tui, resultString))
     }
 }

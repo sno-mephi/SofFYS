@@ -8,5 +8,5 @@ import ru.idfedorov09.telegram.bot.data.repo.TeamRepository
 class UserInfoService(
     private val teamRepository: TeamRepository,
 ) {
-    fun getTeam(userInfo: UserInfo) = userInfo.teamId?.let { teamRepository.findById(it) }
+    fun getTeam(userInfo: UserInfo) = userInfo.teamId?.let { teamRepository.findById(it).get() }
 }

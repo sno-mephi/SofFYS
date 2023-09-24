@@ -1,6 +1,7 @@
 package ru.idfedorov09.telegram.bot.fetcher
 
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import ru.idfedorov09.telegram.bot.data.PropertyNames
 import ru.idfedorov09.telegram.bot.data.enums.BotStage
@@ -12,7 +13,10 @@ import ru.idfedorov09.telegram.bot.util.UpdatesUtil
 /**
  * Подтягивает Stage бота из бд. Если не получается, то становится в offline
  */
-class StageResolveFetcher : GeneralFetcher() {
+@Component
+class StageResolveFetcher(
+    private val redisService: RedisService,
+) : GeneralFetcher() {
 
     companion object {
         private val log = LoggerFactory.getLogger(this.javaClass)
@@ -24,7 +28,6 @@ class StageResolveFetcher : GeneralFetcher() {
         update: Update,
         updatesUtil: UpdatesUtil,
         exp: ExpContainer,
-        redisService: RedisService,
     ) {
         if (exp.EXP_COMMANDS) {
             setStage(updatesUtil, update, redisService, exp)

@@ -1,5 +1,6 @@
 package ru.idfedorov09.telegram.bot.flow
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.idfedorov09.telegram.bot.data.enums.BotStage
@@ -22,8 +23,11 @@ open class FlowConfiguration {
         return flowBuilder
     }
 
-    private val stageResolveFetcher = StageResolveFetcher()
-    private val commandValidateResponseFetcher = CommandValidateResponseFetcher()
+    @Autowired
+    private lateinit var stageResolveFetcher: StageResolveFetcher
+
+    @Autowired
+    private lateinit var commandValidateResponseFetcher: CommandValidateResponseFetcher
 
     // TODO: идея по автоматической смене состояния по просшествия определенного времени
     // самым первым фетчером сделать фетчер, который отвечает за смену состояния - при нулевом update

@@ -23,13 +23,13 @@ class StateFetcher(
         exp: ExpContainer,
     ) {
         val tui = userResponse.initiator.tui ?: return
-        var answerMessage = "Статус игры: ${exp.botStage}."
+        var answerMessage = "Статус игры: ${exp.botStage}"
         val start_game_time = redisService.getSafe("start_game_time")
         start_game_time?.let {
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             val end_game_time = LocalDateTime.parse(start_game_time, formatter).plusMinutes(30)
             val timeDifference = Duration.between(LocalDateTime.now(ZoneId.of("Europe/Moscow")), end_game_time)
-            answerMessage += String.format("\nОставшееся время игры: %d минут %d секунд.", timeDifference.toMinutes(), timeDifference.seconds % 60)
+            answerMessage += String.format("\nОставшееся время игры: %d минут %d секунд", timeDifference.toMinutes(), timeDifference.seconds % 60)
         }
         bot.execute(SendMessage(tui, answerMessage))
     }

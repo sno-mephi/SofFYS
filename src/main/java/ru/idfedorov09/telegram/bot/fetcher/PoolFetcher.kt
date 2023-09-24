@@ -8,9 +8,6 @@ import ru.idfedorov09.telegram.bot.executor.TelegramPollingBot
 import ru.idfedorov09.telegram.bot.flow.InjectData
 import ru.idfedorov09.telegram.bot.service.UserInfoService
 
-/**
- * Text
- */
 @Component
 class PoolFetcher(
     private val userInfoService: UserInfoService,

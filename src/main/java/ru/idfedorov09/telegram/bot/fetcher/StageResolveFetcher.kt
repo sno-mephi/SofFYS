@@ -30,7 +30,7 @@ class StageResolveFetcher : GeneralFetcher() {
             setStage(updatesUtil, update, redisService, exp)
         }
 
-        exp.botStage = redisService.getValue(PropertyNames.STAGE_PROPERTY)
+        exp.botStage = redisService.getSafe(PropertyNames.STAGE_PROPERTY)
             ?.let { BotStage.valueOf(it) }
             ?: BotStage.OFFLINE
     }

@@ -14,7 +14,7 @@ data class UserInfo(
     val id: Long = -1,
 
     @Column(name = "true_user_id", columnDefinition = "TEXT")
-    val tui: String = "default_user_id",
+    val tui: String? = null,
 
     @Column(name = "team_id")
     val teamId: Int? = null,
@@ -23,7 +23,7 @@ data class UserInfo(
     val isCaptain: Boolean = false,
 
     @Column(name = "study_group", columnDefinition = "TEXT")
-    val studyGroup: String = "default_group",
+    val studyGroup: String? = null,
 ) {
     // TODO: дописать метод для получения команды текущего юзера
     fun team(): Team? {

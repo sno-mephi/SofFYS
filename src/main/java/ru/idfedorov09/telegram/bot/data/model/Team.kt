@@ -11,7 +11,7 @@ data class Team(
     val id: Long = -1,
 
     @Column(name = "team_name", columnDefinition = "TEXT")
-    val teamName: String = "default_team_name",
+    val teamName: String? = null,
 
     @ElementCollection
     @Column(name = "current_problems", columnDefinition = "INTEGER[]")

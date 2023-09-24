@@ -15,11 +15,11 @@ data class Team(
 
     @ElementCollection
     @Column(name = "current_problems", columnDefinition = "INTEGER[]")
-    val problemsPool: List<Int> = mutableListOf(),
+    val problemsPool: List<Long> = mutableListOf(),
 
     @ElementCollection
     @Column(name = "completed_problems", columnDefinition = "INTEGER[]")
-    val completedProblems: List<Int> = mutableListOf(),
+    val completedProblems: List<Long> = mutableListOf(),
 
     /**
      * Хэш тг картинки доски команды

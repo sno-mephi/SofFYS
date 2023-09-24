@@ -5,9 +5,10 @@ enum class ResponseAction(
 ) {
     // админские
     DEFAULT_VALUE("default_value"),
-    START_REGISTRATION("reg_start"),
-    START_APPEAL("appeal_start"),
-    FINISH_APPEAL("appeal_finish"),
+    START_REGISTRATION("/reg_start"), // OFF TO REG
+    START_GAME("/game_start"), // REG TO GAME
+    START_APPEAL("/appeal_start"), // лишнее? game должна заканчиваеться сама. Выпилить
+    FINISH_APPEAL("/appeal_finish"), // APPEAL TO AFTER_APPEAL Конец апелляции, подведение результатов
 
     // пользовательские вида ```РУБРИКА_БАЛЛ (ответ)``` (или с ответом на сообщение)
     SEND_ANSWER(null),

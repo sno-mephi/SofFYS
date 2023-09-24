@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.idfedorov09.telegram.bot.data.enums.BotStage
+import ru.idfedorov09.telegram.bot.fetcher.AdminCommandsFetcher
 import ru.idfedorov09.telegram.bot.fetcher.CommandValidateResponseFetcher
 import ru.idfedorov09.telegram.bot.fetcher.StageResolveFetcher
 import ru.idfedorov09.telegram.bot.fetcher.StateFetcher
@@ -31,24 +32,32 @@ open class FlowConfiguration {
     @Autowired
     private lateinit var commandValidateResponseFetcher: CommandValidateResponseFetcher
 
+    @Autowired
+    private lateinit var adminCommandsFetcher: AdminCommandsFetcher
+
     // TODO: идея по автоматической смене состояния по просшествия определенного времени
     // самым первым фетчером сделать фетчер, который отвечает за смену состояния - при нулевом update
     // и просто запускать граф в отложенных задачах!
+
+    // TODO: при изменении botStage добавить моментальное изменение его в редисе!
     private fun FlowBuilder.buildFlow() {
         group {
             fetch(stageResolveFetcher)
             fetch(commandValidateResponseFetcher)
             // если пришедшая команда валидная, то работаем дальше
             whenComplete(condition = { exp.IS_VALID_COMMAND }) {
-                group(condition = { exp.botStage == BotStage.OFFLINE }) {
-                }
-                group(condition = { exp.botStage == BotStage.REGISTRATION }) {
-                }
-                group(condition = { exp.botStage == BotStage.GAME }) {
-                }
-                group(condition = { exp.botStage == BotStage.APPEAL }) {
-                }
-                group(condition = { exp.botStage == BotStage.AFTER_APPEAL }) {
+                fetch(adminCommandsFetcher)
+                whenComplete {
+                    group(condition = { exp.botStage == BotStage.OFFLINE }) {
+                    }
+                    group(condition = { exp.botStage == BotStage.REGISTRATION }) {
+                    }
+                    group(condition = { exp.botStage == BotStage.GAME }) {
+                    }
+                    group(condition = { exp.botStage == BotStage.APPEAL }) {
+                    }
+                    group(condition = { exp.botStage == BotStage.AFTER_APPEAL }) {
+                    }
                 }
                 fetch(stateFetcher)
             }

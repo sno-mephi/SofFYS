@@ -17,16 +17,11 @@ data class UserInfo(
     val tui: String? = null,
 
     @Column(name = "team_id")
-    val teamId: Int? = null,
+    val teamId: Long? = null,
 
     @Column(name = "is_captain")
     val isCaptain: Boolean = false,
 
     @Column(name = "study_group", columnDefinition = "TEXT")
     val studyGroup: String? = null,
-) {
-    // TODO: дописать метод для получения команды текущего юзера
-    fun team(): Team? {
-        return null
-    }
-}
+)

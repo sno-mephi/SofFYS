@@ -7,8 +7,10 @@ import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
 import ru.idfedorov09.telegram.bot.data.enums.UserResponseType
 import ru.idfedorov09.telegram.bot.data.model.UserInfo
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
+import ru.idfedorov09.telegram.bot.data.repo.UserInfoRepository
 import ru.idfedorov09.telegram.bot.flow.ExpContainer
 import ru.idfedorov09.telegram.bot.flow.InjectData
+import ru.idfedorov09.telegram.bot.service.UserInfoService
 import ru.idfedorov09.telegram.bot.util.UpdatesUtil
 import java.time.LocalDateTime
 
@@ -17,14 +19,13 @@ import java.time.LocalDateTime
  * а также определяет, валидная ли команда
  */
 @Component
-class CommandValidateResponseFetcher : GeneralFetcher() {
+class CommandValidateResponseFetcher(
+    private val userInfoRepository: UserInfoRepository,
+) : GeneralFetcher() {
 
     companion object {
         private val log = LoggerFactory.getLogger(this.javaClass)
     }
-
-    private lateinit var update: Update
-    private var message: String? = null
 
     @InjectData
     fun doFetch(
@@ -37,9 +38,6 @@ class CommandValidateResponseFetcher : GeneralFetcher() {
         val command = message?.split(" ")?.get(0)
         val chatId = updatesUtil.getChatId(update)
 
-        this.update = update
-        this.message = message
-
         // TODO: а что если нажата кнопка? message==null по идее. подумать!
         if (message == null || chatId == null) return null
 
@@ -49,27 +47,27 @@ class CommandValidateResponseFetcher : GeneralFetcher() {
 
         val userResponse = when {
             isProblemSelect(message) -> UserResponse(
-                initiator = getUserInfo(),
+                initiator = getUserInfoOrInsertToDb(chatId),
                 userResponseType = UserResponseType.MESSAGE_RESPONSE,
                 action = ResponseAction.SELECT_PROBLEM,
                 receiveTime = currentTime,
-                problemId = extractProblemId(),
+                problemId = extractProblemId(message),
                 answer = null,
             )
-            isAnswerToProblem() -> UserResponse(
-                initiator = getUserInfo(),
+            isAnswerToProblem(message) -> UserResponse(
+                initiator = getUserInfoOrInsertToDb(chatId),
                 userResponseType = extractAnswerType(),
                 action = ResponseAction.SEND_ANSWER,
                 receiveTime = currentTime,
-                problemId = extractProblemId(),
-                answer = extractAnswer(),
+                problemId = extractProblemId(message),
+                answer = extractAnswer(message),
             )
             isOtherCommand -> UserResponse(
-                initiator = getUserInfo(),
+                initiator = getUserInfoOrInsertToDb(chatId),
                 userResponseType = UserResponseType.MESSAGE_RESPONSE,
                 action = ResponseAction.valueOf(command!!),
                 receiveTime = currentTime,
-                problemId = extractProblemId(),
+                problemId = extractProblemId(message),
                 answer = null,
             )
             else -> null
@@ -103,20 +101,26 @@ class CommandValidateResponseFetcher : GeneralFetcher() {
     }
 
     // TODO: дописать для случая REPLY
-    private fun extractProblemId(): Long? {
+    private fun extractProblemId(
+        message: String?,
+    ): Long? {
         message ?: return null
         if (!isMessageContainsProblem(message)) return null
 
-        return message!!.split(" ")[1].toLongOrNull()
+        return message.split(" ")[1].toLongOrNull()
     }
 
     // TODO: дописать для случая REPLY
-    private fun extractAnswer(): String? {
+    private fun extractAnswer(
+        message: String?,
+    ): String? {
         return message?.split(" ")?.drop(2)?.joinToString(" ")
     }
 
     // TODO: дописать для случая REPLY
-    private fun isAnswerToProblem(): Boolean {
+    private fun isAnswerToProblem(
+        message: String?,
+    ): Boolean {
         return isMessageContainsProblem(message) && !isProblemSelect(message)
     }
 
@@ -125,8 +129,8 @@ class CommandValidateResponseFetcher : GeneralFetcher() {
         return UserResponseType.MESSAGE_RESPONSE
     }
 
-    // TODO: попробовать потянуть из бд, если пусто то зарегать!
-    private fun getUserInfo(): UserInfo {
-        return UserInfo()
-    }
+    private fun getUserInfoOrInsertToDb(
+        chatId: String,
+    ) = userInfoRepository.findByTui(chatId)
+        ?: UserInfo(tui = chatId).also { userInfoRepository.save(it) }
 }

@@ -21,6 +21,7 @@ import java.time.LocalDateTime
 @Component
 class CommandValidateResponseFetcher(
     private val userInfoRepository: UserInfoRepository,
+    private val userInfoService: UserInfoService
 ) : GeneralFetcher() {
 
     companion object {
@@ -45,9 +46,13 @@ class CommandValidateResponseFetcher(
             .mapNotNull { it.textForm }
             .contains(command)
 
+        val initiator = getUserInfoOrInsertToDb(chatId)
+        val initiatorTeam = userInfoService.getTeam(initiator)
+
         val userResponse = when {
             isProblemSelect(message) -> UserResponse(
-                initiator = getUserInfoOrInsertToDb(chatId),
+                initiator = initiator,
+                initiatorTeam = initiatorTeam,
                 userResponseType = UserResponseType.MESSAGE_RESPONSE,
                 action = ResponseAction.SELECT_PROBLEM,
                 receiveTime = currentTime,
@@ -55,7 +60,8 @@ class CommandValidateResponseFetcher(
                 answer = null,
             )
             isAnswerToProblem(message) -> UserResponse(
-                initiator = getUserInfoOrInsertToDb(chatId),
+                initiator = initiator,
+                initiatorTeam = initiatorTeam,
                 userResponseType = extractAnswerType(),
                 action = ResponseAction.SEND_ANSWER,
                 receiveTime = currentTime,
@@ -63,7 +69,8 @@ class CommandValidateResponseFetcher(
                 answer = extractAnswer(message),
             )
             isOtherCommand -> UserResponse(
-                initiator = getUserInfoOrInsertToDb(chatId),
+                initiator = initiator,
+                initiatorTeam = initiatorTeam,
                 userResponseType = UserResponseType.MESSAGE_RESPONSE,
                 action = ResponseAction.valueOf(command!!),
                 receiveTime = currentTime,

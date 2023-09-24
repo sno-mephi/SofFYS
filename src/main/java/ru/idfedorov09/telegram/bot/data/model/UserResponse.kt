@@ -9,6 +9,7 @@ import java.time.LocalDateTime
  */
 data class UserResponse(
     val initiator: UserInfo, // инициатор ответа
+    val initiatorTeam: Team?, // команда инициатора, null если такой нет
     val userResponseType: UserResponseType, // тип ответа
     val action: ResponseAction, // действие
     val receiveTime: LocalDateTime, // время в котрое пришло обновление

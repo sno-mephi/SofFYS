@@ -31,7 +31,6 @@ class PoolFetcher(
             val problem = problemRepository.findById(probId).get()
             answerMessage += "\n$i. '${problem.category} ${problem.cost}' (ЛУЛ/2)"
             // добавить вместо ЛУЛ счётчик попыток(сколько осталось)
-
             i++
         }
         bot.execute(SendMessage(tui, answerMessage).also { it.enableMarkdown(true) })

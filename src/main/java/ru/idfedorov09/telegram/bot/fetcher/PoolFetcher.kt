@@ -19,16 +19,21 @@ class PoolFetcher(
         userResponse: UserResponse,
         bot: TelegramPollingBot,
     ) {
-        val problemsPool = userResponse.initiatorTeam?.problemsPool ?: return
+        val tui = userResponse.initiator.tui ?: return
+
+        val problemsPool = userResponse.initiatorTeam?.problemsPool ?: run {
+            bot.execute(SendMessage(tui, "В пуле нет задач"))
+            return
+        }
         var i = 1
+        var answerMessage = "Задачи в пуле:"
         problemsPool.forEach { probId ->
             val problem = problemRepository.findById(probId).get()
-
-            val tui = userResponse.initiator.tui ?: return
-
-            bot.execute(SendMessage(tui, "i" + "'${problem.category} ${problem.cost}'").also { it.enableMarkdown(true) })
+            answerMessage += "\n$i. '${problem.category} ${problem.cost}' (ЛУЛ/2)"
+            // добавить вместо ЛУЛ счётчик попыток(сколько осталось)
 
             i++
         }
+        bot.execute(SendMessage(tui, answerMessage).also { it.enableMarkdown(true) })
     }
 }

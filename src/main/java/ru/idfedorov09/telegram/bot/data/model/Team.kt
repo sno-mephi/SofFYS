@@ -20,4 +20,10 @@ data class Team(
     @ElementCollection
     @Column(name = "completed_problems", columnDefinition = "INTEGER[]")
     val completedProblems: List<Int> = mutableListOf(),
+
+    /**
+     * Хэш тг картинки доски команды
+     */
+    @Column(name = "team_name", columnDefinition = "TEXT")
+    val lastBoardCache: String? = null
 )

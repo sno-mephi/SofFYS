@@ -1,6 +1,7 @@
 package ru.idfedorov09.telegram.bot.fetcher
 
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
 import ru.idfedorov09.telegram.bot.data.enums.UserResponseType
@@ -15,6 +16,7 @@ import java.time.LocalDateTime
  * Фетчер обрабатывающий сообщения-команды и заносящий информацию о них в контекст,
  * а также определяет, валидная ли команда
  */
+@Component
 class CommandValidateResponseFetcher : GeneralFetcher() {
 
     companion object {

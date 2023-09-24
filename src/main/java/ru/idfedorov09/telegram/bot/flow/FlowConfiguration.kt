@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration
 import ru.idfedorov09.telegram.bot.data.enums.BotStage
 import ru.idfedorov09.telegram.bot.fetcher.CommandValidateResponseFetcher
 import ru.idfedorov09.telegram.bot.fetcher.StageResolveFetcher
+import ru.idfedorov09.telegram.bot.fetcher.StateFetcher
 
 /**
  * Основной класс, в котором строится последовательность вычислений (граф)
@@ -25,7 +26,8 @@ open class FlowConfiguration {
 
     @Autowired
     private lateinit var stageResolveFetcher: StageResolveFetcher
-
+    @Autowired
+    private lateinit var stateFetcher: StateFetcher
     @Autowired
     private lateinit var commandValidateResponseFetcher: CommandValidateResponseFetcher
 
@@ -48,6 +50,7 @@ open class FlowConfiguration {
                 }
                 group(condition = { exp.botStage == BotStage.AFTER_APPEAL }) {
                 }
+                fetch(stateFetcher)
             }
         }
     }

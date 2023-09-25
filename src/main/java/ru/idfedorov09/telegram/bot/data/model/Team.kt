@@ -27,6 +27,6 @@ data class Team(
     /**
      * Хэш тг картинки доски команды
      */
-    @Column(name = "team_name", columnDefinition = "TEXT")
-    val lastBoardCache: String? = null,
+    @Column(name = "last_board_cache", columnDefinition = "TEXT")
+    val lastBoardCache: String? = null
 )

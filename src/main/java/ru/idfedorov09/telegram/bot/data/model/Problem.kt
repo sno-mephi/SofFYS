@@ -22,6 +22,12 @@ data class Problem(
     @ElementCollection
     @Column(name = "answers", columnDefinition = "TEXT[]")
     val answers: List<String> = mutableListOf(),
+
+    /**
+     * Хэш тг картинки условия задачи
+     */
+    @Column(name = "problem_cache", columnDefinition = "TEXT")
+    val problemCache: String? = null
 ) {
     /**
      * проверяет, является ли anotherAnswer ответом

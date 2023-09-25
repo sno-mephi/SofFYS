@@ -14,7 +14,7 @@ data class Team(
     val teamName: String? = null,
 
     @ElementCollection
-    @Column(name = "current_problems", columnDefinition = "BIGINT[]")
+    @Column(name = "problems_pool", columnDefinition = "BIGINT[]")
     val problemsPool: MutableList<Long> = mutableListOf(),
 
     @ElementCollection

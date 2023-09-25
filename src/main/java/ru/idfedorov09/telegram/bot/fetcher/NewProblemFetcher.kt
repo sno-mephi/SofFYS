@@ -69,7 +69,7 @@ class NewProblemFetcher(
                     bot.execute(photo)
                 }
             }
-        toPoll(teamId, problemId)
+        toPool(teamId, problemId)
 
         val boardHash = bot.execute(
             SendPhoto().also {
@@ -81,7 +81,7 @@ class NewProblemFetcher(
         teamRepository.save(team.copy(lastBoardHash = boardHash))
     }
 
-    private fun toPoll(teamId: Long, problemId: Long) {
-        changeBoard(teamId, problemId, "POLL")
+    private fun toPool(teamId: Long, problemId: Long) {
+        changeBoard(teamId, problemId, "POOL")
     }
 }

@@ -21,13 +21,13 @@ data class Problem(
 
     @ElementCollection
     @Column(name = "answers", columnDefinition = "TEXT[]")
-    val answers: List<String> = mutableListOf(),
+    val answers: MutableList<String> = mutableListOf(),
 
     /**
      * Хэш тг картинки условия задачи
      */
-    @Column(name = "problem_cache", columnDefinition = "TEXT")
-    val problemCache: String? = null
+    @Column(name = "problem_hash", columnDefinition = "TEXT")
+    val problemHash: String? = null
 ) {
     /**
      * проверяет, является ли anotherAnswer ответом

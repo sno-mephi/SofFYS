@@ -15,11 +15,14 @@ data class Team(
 
     @ElementCollection
     @Column(name = "current_problems", columnDefinition = "BIGINT[]")
-    val problemsPool: List<Long> = mutableListOf(),
+    val problemsPool: MutableList<Long> = mutableListOf(),
 
     @ElementCollection
     @Column(name = "completed_problems", columnDefinition = "BIGINT[]")
-    val completedProblems: List<Long> = mutableListOf(),
+    val completedProblems: MutableList<Long> = mutableListOf(),
+
+    @Column(name = "points", columnDefinition = "BIGINT")
+    val points: Long = 0,
 
     @Column(name = "points")
     val points: Long = 0,
@@ -27,6 +30,6 @@ data class Team(
     /**
      * Хэш тг картинки доски команды
      */
-    @Column(name = "last_board_cache", columnDefinition = "TEXT")
-    val lastBoardCache: String? = null
+    @Column(name = "last_board_hash", columnDefinition = "TEXT")
+    val lastBoardHash: String? = null
 )

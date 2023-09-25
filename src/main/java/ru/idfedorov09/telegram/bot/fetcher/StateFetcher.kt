@@ -39,7 +39,7 @@ class StateFetcher(
             val timeDifference = Duration.between(LocalDateTime.now(ZoneId.of("Europe/Moscow")), endGameTime)
             answerMessage += String.format("\nОставшееся время игры: %d минут %d секунд", timeDifference.toMinutes(), timeDifference.seconds % 60)
 
-            val photoHash = userResponse.initiatorTeam?.lastBoardCache ?: return
+            val photoHash = userResponse.initiatorTeam?.lastBoardHash ?: return
 
             bot.execute(
                 SendPhoto().also {

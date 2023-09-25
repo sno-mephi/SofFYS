@@ -7,13 +7,13 @@ import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import ru.idfedorov09.telegram.bot.fetcher.GeneralFetcher
 
-class FlowBuilder {
+class FlowBuilder(
+    var exp: ExpContainer
+) {
 
     companion object {
         private val log = LoggerFactory.getLogger(this.javaClass)
     }
-
-    var exp: ExpContainer = ExpContainer()
 
     private var currentNode: FlowNode = FlowNode(
         GeneralFetcher(),
@@ -24,21 +24,21 @@ class FlowBuilder {
 
     fun group(
         condition: (ExpContainer) -> Boolean = { true },
-        action: () -> Unit,
+        action: (ExpContainer) -> Unit,
     ) {
         val lastStateNode = currentNode
         currentNode = currentNode.addGroupNode(condition)
-        action()
+        action(exp)
         currentNode = lastStateNode
     }
 
     fun whenComplete(
         condition: (ExpContainer) -> Boolean = { true },
-        action: () -> Unit,
+        action: (ExpContainer) -> Unit,
     ) {
         val lastStateNode = currentNode
         currentNode = currentNode.addWaitNode(condition)
-        action()
+        action(exp)
         currentNode = lastStateNode
     }
 
@@ -48,14 +48,22 @@ class FlowBuilder {
         currentNode.addFetcher(fetcherInstance)
     }
 
+    suspend fun initAndRun(
+        node: FlowNode = currentNode,
+        flowContext: FlowContext,
+    ) {
+        // очищаем эксп
+        exp = ExpContainer()
+        run(node, flowContext)
+    }
+
     suspend fun run(
         node: FlowNode = currentNode,
         flowContext: FlowContext,
     ) {
-        exp = ExpContainer()
         // кладем эксп в контекст, чтобы была возможность менять его по ходу выполнения графа
         if (!flowContext.containsBeanByType(ExpContainer::class.java)) {
-            flowContext.insertObject(ExpContainer())
+            flowContext.insertObject(exp)
         }
         coroutineScope {
             val toRun = mutableListOf<Any>()

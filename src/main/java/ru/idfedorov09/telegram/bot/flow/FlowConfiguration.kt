@@ -24,7 +24,9 @@ open class FlowConfiguration(
      */
     @Bean(name = ["flowBuilder"])
     open fun flowBuilder(): FlowBuilder {
-        val flowBuilder = FlowBuilder()
+        val flowBuilder = FlowBuilder(
+            exp = ExpContainer(),
+        )
         flowBuilder.buildFlow()
         return flowBuilder
     }
@@ -36,21 +38,21 @@ open class FlowConfiguration(
     // TODO: при изменении botStage добавить моментальное изменение его в редисе!
     private fun FlowBuilder.buildFlow() {
         group {
-            fetch(stageResolveFetcher)
+            // fetch(stageResolveFetcher)
             fetch(commandValidateResponseFetcher)
             // если пришедшая команда валидная, то работаем дальше
-            whenComplete(condition = { exp.IS_VALID_COMMAND }) {
+            whenComplete(condition = { it.IS_VALID_COMMAND }) {
                 fetch(adminCommandsFetcher)
                 whenComplete {
-                    group(condition = { exp.botStage == BotStage.OFFLINE }) {
+                    group(condition = { it.botStage == BotStage.OFFLINE }) {
                     }
-                    group(condition = { exp.botStage == BotStage.REGISTRATION }) {
+                    group(condition = { it.botStage == BotStage.REGISTRATION }) {
                     }
-                    group(condition = { exp.botStage == BotStage.GAME }) {
+                    group(condition = { it.botStage == BotStage.GAME }) {
                     }
-                    group(condition = { exp.botStage == BotStage.APPEAL }) {
+                    group(condition = { it.botStage == BotStage.APPEAL }) {
                     }
-                    group(condition = { exp.botStage == BotStage.AFTER_APPEAL }) {
+                    group(condition = { it.botStage == BotStage.AFTER_APPEAL }) {
                     }
                 }
                 fetch(stateFetcher)

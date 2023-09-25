@@ -37,10 +37,12 @@ class StateFetcher(
 
             bot.execute(
                 SendPhoto().also {
+                    it.caption = answerMessage
                     it.chatId = tui
                     it.photo = InputFile(photoHash)
                 },
             )
+            return
         }
         bot.execute(SendMessage(tui, answerMessage))
     }

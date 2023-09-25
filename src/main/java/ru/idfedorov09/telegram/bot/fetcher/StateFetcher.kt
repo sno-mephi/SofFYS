@@ -1,9 +1,11 @@
 package ru.idfedorov09.telegram.bot.fetcher
 
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
 import org.telegram.telegrambots.meta.api.objects.InputFile
+import ru.idfedorov09.telegram.bot.data.enums.BotStage
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
 import ru.idfedorov09.telegram.bot.executor.TelegramPollingBot
 import ru.idfedorov09.telegram.bot.flow.ExpContainer
@@ -18,6 +20,10 @@ import java.time.format.DateTimeFormatter
 class StateFetcher(
     private val redisService: RedisService,
 ) : GeneralFetcher() {
+    companion object {
+        private val log = LoggerFactory.getLogger(this.javaClass)
+    }
+
     @InjectData
     fun doFetch(
         userResponse: UserResponse,
@@ -44,6 +50,12 @@ class StateFetcher(
             )
             return
         }
+
+        if (exp.botStage == BotStage.GAME) {
+            log.error("bot state: GAME, but there is no start time (it is NULL)")
+            return
+        }
+
         bot.execute(SendMessage(tui, answerMessage))
     }
 }

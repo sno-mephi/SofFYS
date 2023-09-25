@@ -24,9 +24,6 @@ data class Team(
     @Column(name = "points")
     val points: Long = 0,
 
-    @Column(name = "points")
-    val points: Long = 0,
-
     /**
      * Хэш тг картинки доски команды
      */

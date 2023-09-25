@@ -51,7 +51,7 @@ class UpdatesController : UpdatesSender(), UpdatesHandler {
         toContext().forEach { flowContext.insertObject(it) }
 
         val flowJob = GlobalScope.launch {
-            flowBuilder.run(
+            flowBuilder.initAndRun(
                 flowContext = flowContext,
             )
             // TODO: подумать, что сделать с этим; возможно, это лишнее действие

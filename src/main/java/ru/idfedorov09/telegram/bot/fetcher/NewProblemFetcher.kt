@@ -22,7 +22,7 @@ class NewProblemFetcher(
 ) : GeneralFetcher() {
 
     companion object {
-        private const val DAUN_ID = "473458128"
+        private const val POLYAKOV_TRASH_ID = "473458128"
     }
 
     @InjectData

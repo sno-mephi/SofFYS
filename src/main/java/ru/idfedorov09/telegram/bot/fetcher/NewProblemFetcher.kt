@@ -1,43 +1,44 @@
 package ru.idfedorov09.telegram.bot.fetcher
 
+import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
 import org.telegram.telegrambots.meta.api.objects.InputFile
-import org.telegram.telegrambots.meta.api.objects.Update
-import org.telegram.telegrambots.meta.api.objects.User
 import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
 import ru.idfedorov09.telegram.bot.data.repo.ProblemRepository
 import ru.idfedorov09.telegram.bot.data.repo.TeamRepository
 import ru.idfedorov09.telegram.bot.data.repo.UserInfoRepository
 import ru.idfedorov09.telegram.bot.executor.TelegramPollingBot
-import ru.idfedorov09.telegram.bot.flow.ExpContainer
 import ru.idfedorov09.telegram.bot.flow.InjectData
-import ru.idfedorov09.telegram.bot.service.RedisService
 import ru.idfedorov09.telegram.bot.util.Board.changeBoard
-import ru.idfedorov09.telegram.bot.util.UpdatesUtil
 import java.io.File
 
-class NewProblemFetcher (
+@Component
+class NewProblemFetcher(
     private val userInfoRepository: UserInfoRepository,
     private val problemRepository: ProblemRepository,
-    private val teamRepository: TeamRepository
+    private val teamRepository: TeamRepository,
 ) : GeneralFetcher() {
+
+    companion object {
+        private const val DAUN_ID = "473458128"
+    }
 
     @InjectData
     fun doFetch(
         userResponse: UserResponse,
         bot: TelegramPollingBot,
-    ){
+    ) {
         if (userResponse.action != ResponseAction.SELECT_PROBLEM) return
         val user = userResponse.initiator
         val tui = userResponse.initiator.tui ?: return
         val problemId = userResponse.problemId ?: return
-        val team = userResponse.initiatorTeam?: return
+        val team = userResponse.initiatorTeam ?: return
         val teamId = team.id
         val problemPhotoHash = problemRepository.findById(problemId).get().problemHash
 
-        if (problemId in team.problemsPool){
+        if (problemId in team.problemsPool) {
             bot.execute(
                 SendPhoto().also {
                     it.caption = "Эта задача уже есть в пуле"
@@ -48,37 +49,39 @@ class NewProblemFetcher (
             return
         }
         if (!user.isCaptain) return
-        if (problemId in team.completedProblems){
+        if (problemId in team.completedProblems) {
             bot.execute(SendMessage(tui, "Вы уже решали эту задачу"))
             return
         }
-        if (team.problemsPool.size == 3){
+        if (team.problemsPool.size == 3) {
             bot.execute(SendMessage(tui, "Вы не можете решать больше трех задач одновременно"))
             return
         }
         team.problemsPool.add(problemId)
 
-        userInfoRepository.findAll().filter { it.teamId == teamId }.forEach { userInTeam ->
-            userInTeam.tui?.let {
-                val photo = SendPhoto()
-                photo.chatId = it
-                photo.photo = InputFile(problemPhotoHash)
-                bot.execute(photo)
+        userInfoRepository.findAll()
+            .filter { it.teamId == teamId }
+            .forEach { userInTeam ->
+                userInTeam.tui?.let {
+                    val photo = SendPhoto()
+                    photo.chatId = it
+                    photo.photo = InputFile(problemPhotoHash)
+                    bot.execute(photo)
+                }
             }
-        }
-        toPull(teamId, problemId)
-        val photo = SendPhoto()
-        photo.chatId = 473458128.toString()
-        photo.photo = InputFile(File("sofFYS\\images\\boards\\$teamId.png"))
-        val messagePhoto = bot.execute(photo)
-        val boardHash = messagePhoto.document.fileId
+        toPoll(teamId, problemId)
+
+        val boardHash = bot.execute(
+            SendPhoto().also {
+                it.chatId = DAUN_ID
+                it.photo = InputFile(File("sofFYS\\images\\boards\\$teamId.png"))
+            },
+        ).document.fileId
+
         teamRepository.save(team.copy(lastBoardHash = boardHash))
-
-
-
     }
 
-    private fun toPull(teamId: Long, problemId: Long){
+    private fun toPoll(teamId: Long, problemId: Long) {
         changeBoard(teamId, problemId, "POLL")
     }
 }

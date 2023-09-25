@@ -21,7 +21,7 @@ data class Team(
     @Column(name = "completed_problems", columnDefinition = "BIGINT[]")
     val completedProblems: MutableList<Long> = mutableListOf(),
 
-    @Column(name = "points", columnDefinition = "BIGINT")
+    @Column(name = "points")
     val points: Long = 0,
 
     @Column(name = "points")
@@ -31,5 +31,5 @@ data class Team(
      * Хэш тг картинки доски команды
      */
     @Column(name = "last_board_hash", columnDefinition = "TEXT")
-    val lastBoardHash: String? = null
+    val lastBoardHash: String? = null,
 )

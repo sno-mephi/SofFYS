@@ -21,6 +21,9 @@ data class Team(
     @Column(name = "completed_problems", columnDefinition = "BIGINT[]")
     val completedProblems: List<Long> = mutableListOf(),
 
+    @Column(name = "points", columnDefinition = "BIGINT")
+    val points: Long = 0,
+
     /**
      * Хэш тг картинки доски команды
      */

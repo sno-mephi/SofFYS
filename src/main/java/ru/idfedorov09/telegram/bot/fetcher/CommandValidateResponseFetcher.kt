@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 @Component
 class CommandValidateResponseFetcher(
     private val userInfoRepository: UserInfoRepository,
-    private val userInfoService: UserInfoService
+    private val userInfoService: UserInfoService,
 ) : GeneralFetcher() {
 
     companion object {
@@ -72,7 +72,7 @@ class CommandValidateResponseFetcher(
                 initiator = initiator,
                 initiatorTeam = initiatorTeam,
                 userResponseType = UserResponseType.MESSAGE_RESPONSE,
-                action = ResponseAction.valueOf(command!!),
+                action = ResponseAction.entries.first { it.textForm == command },
                 receiveTime = currentTime,
                 problemId = extractProblemId(message),
                 answer = null,

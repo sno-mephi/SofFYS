@@ -2,6 +2,7 @@ package ru.idfedorov09.telegram.bot.fetcher
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
 import ru.idfedorov09.telegram.bot.data.repo.ProblemRepository
 import ru.idfedorov09.telegram.bot.executor.TelegramPollingBot
@@ -19,6 +20,10 @@ class PoolFetcher(
         userResponse: UserResponse,
         bot: TelegramPollingBot,
     ) {
+        if (userResponse.action != ResponseAction.GET_POOL) {
+            return
+        }
+
         val tui = userResponse.initiator.tui ?: return
 
         val problemsPool = userResponse.initiatorTeam?.problemsPool ?: run {

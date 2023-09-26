@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import ru.idfedorov09.telegram.bot.data.enums.BotStage
+import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
 import ru.idfedorov09.telegram.bot.executor.TelegramPollingBot
 import ru.idfedorov09.telegram.bot.flow.ExpContainer
@@ -30,6 +31,10 @@ class StateFetcher(
         bot: TelegramPollingBot,
         exp: ExpContainer,
     ) {
+        if (userResponse.action != ResponseAction.GET_STATE) {
+            return
+        }
+
         val tui = userResponse.initiator.tui ?: return
         var answerMessage = "Статус игры: ${exp.botStage}"
         val startGameTime = redisService.getSafe("start_game_time")

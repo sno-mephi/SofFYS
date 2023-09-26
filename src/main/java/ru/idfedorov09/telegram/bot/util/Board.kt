@@ -5,7 +5,7 @@ import java.io.File
 import javax.imageio.ImageIO
 
 object Board {
-    fun changeBoard(teamId: Long,  problemId: Long, color: String) {
+    fun changeBoard(teamId: Long, problemId: Long, color: String) {
         val column = problemId % 11
         val row = problemId / 11
         val c = 391L
@@ -24,19 +24,20 @@ object Board {
         val image2 = ImageIO.read(File("sofFYS\\images\\boards\\$teamId.png"))
 
         val croppedFragment = image1.getSubimage(
-            (c + column * (x + s)).toInt(), (s + row * (y + s)).toInt(),
-            x.toInt(), y.toInt()
+            (c + column * (x + s)).toInt(),
+            (s + row * (y + s)).toInt(),
+            x.toInt(),
+            y.toInt(),
         )
 
         val g2d = image2.createGraphics()
         g2d.drawImage(
             croppedFragment, (c + column * (x + s)).toInt(), (s + row * (y + s)).toInt(),
             (c + column * (x + s) + x).toInt(), (s + row * (y + s) + y).toInt(),
-            0, 0, x.toInt(), y.toInt(), null
+            0, 0, x.toInt(), y.toInt(), null,
         )
         g2d.dispose()
 
         ImageIO.write(image2, "png", File("sofFYS\\images\\boards\\$teamId.png"))
     }
-
 }

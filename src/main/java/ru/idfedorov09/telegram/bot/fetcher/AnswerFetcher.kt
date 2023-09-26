@@ -3,7 +3,6 @@ package ru.idfedorov09.telegram.bot.fetcher
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
-import ru.idfedorov09.telegram.bot.data.model.Problem
 import ru.idfedorov09.telegram.bot.data.model.Team
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
 import ru.idfedorov09.telegram.bot.data.repo.ProblemRepository
@@ -68,7 +67,7 @@ class AnswerFetcher(
         toCompleted(team.id, problemId)
     }
 
-    private fun toCompleted(teamId: Long, problemId: Long){
+    private fun toCompleted(teamId: Long, problemId: Long) {
         changeBoard(teamId, problemId, "COMPLETED")
     }
 }

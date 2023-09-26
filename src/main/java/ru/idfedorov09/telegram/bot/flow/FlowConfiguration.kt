@@ -4,7 +4,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.idfedorov09.telegram.bot.data.enums.BotStage
 import ru.idfedorov09.telegram.bot.fetcher.AdminCommandsFetcher
+import ru.idfedorov09.telegram.bot.fetcher.AnswerFetcher
 import ru.idfedorov09.telegram.bot.fetcher.CommandValidateResponseFetcher
+import ru.idfedorov09.telegram.bot.fetcher.NewProblemFetcher
 import ru.idfedorov09.telegram.bot.fetcher.StageResolveFetcher
 import ru.idfedorov09.telegram.bot.fetcher.StateFetcher
 import ru.idfedorov09.telegram.bot.fetcher.TopFetcher
@@ -19,6 +21,8 @@ open class FlowConfiguration(
     private val stateFetcher: StateFetcher,
     private val topFetcher: TopFetcher,
     private val adminCommandsFetcher: AdminCommandsFetcher,
+    private val newProblemFetcher: NewProblemFetcher,
+    private val answerFetcher: AnswerFetcher,
 ) {
 
     /**
@@ -50,6 +54,8 @@ open class FlowConfiguration(
                     }
                     group(condition = { exp.botStage == BotStage.GAME }) {
                         fetch(topFetcher)
+                        fetch(newProblemFetcher)
+                        fetch(answerFetcher)
                     }
                     group(condition = { exp.botStage == BotStage.APPEAL }) {
                         fetch(topFetcher)

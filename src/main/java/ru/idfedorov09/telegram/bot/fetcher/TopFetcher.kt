@@ -3,7 +3,6 @@ package ru.idfedorov09.telegram.bot.fetcher
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import ru.idfedorov09.telegram.bot.data.enums.BotStage
 import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
 import ru.idfedorov09.telegram.bot.data.repo.TeamRepository
@@ -25,7 +24,7 @@ class TopFetcher(
         bot: TelegramPollingBot,
         exp: ExpContainer,
     ) {
-        if (userResponse.action != ResponseAction.GET_TOP || !(exp.botStage == BotStage.GAME || exp.botStage == BotStage.APPEAL || exp.botStage == BotStage.AFTER_APPEAL)) {
+        if (userResponse.action != ResponseAction.GET_TOP) {
             return
         }
 
@@ -43,10 +42,14 @@ class TopFetcher(
         var i = 1
 
         sortedTeamList.forEach { team ->
-            answerMessage += "\n$i. Команда ${team.first}, суммарный балл на данный момент:${team.second}"
+            if (team.first == userResponse.initiatorTeam?.teamName) {
+                answerMessage += "\n$i. **${team.first}**: ${team.second}"
+            } else {
+                answerMessage += "\n$i. ${team.first}: ${team.second}"
+            }
             i++
         }
 
-        bot.execute(SendMessage(tui, answerMessage))
+        bot.execute(SendMessage(tui, answerMessage).also { it.enableMarkdown(true) })
     }
 }

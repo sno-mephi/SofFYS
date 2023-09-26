@@ -49,14 +49,16 @@ open class FlowConfiguration(
                     group(condition = { exp.botStage == BotStage.REGISTRATION }) {
                     }
                     group(condition = { exp.botStage == BotStage.GAME }) {
+                        fetch(topFetcher)
                     }
                     group(condition = { exp.botStage == BotStage.APPEAL }) {
+                        fetch(topFetcher)
                     }
                     group(condition = { exp.botStage == BotStage.AFTER_APPEAL }) {
+                        fetch(topFetcher)
                     }
                 }
                 fetch(stateFetcher)
-                fetch(topFetcher)
             }
         }
     }

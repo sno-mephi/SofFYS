@@ -35,7 +35,7 @@ class FlowNode(
         children: MutableList<FlowNode> = mutableListOf(),
         parents: MutableList<FlowNode> = mutableListOf(this),
         nodeType: NodeType,
-        condition: (ExpContainer) -> Boolean
+        condition: (ExpContainer) -> Boolean,
     ): FlowNode {
         return addChildrenNode(
             FlowNode(
@@ -43,26 +43,26 @@ class FlowNode(
                 children = children,
                 parents = parents,
                 nodeType = nodeType,
-                condition = condition
+                condition = condition,
             ),
         )
     }
 
     fun addWaitNode(
-        condition: (ExpContainer) -> Boolean
+        condition: (ExpContainer) -> Boolean,
     ): FlowNode {
         return addWGNode(
             nodeType = NodeType.WAIT,
-            condition = condition
+            condition = condition,
         )
     }
 
     fun addGroupNode(
-        condition: (ExpContainer) -> Boolean
+        condition: (ExpContainer) -> Boolean,
     ): FlowNode {
         return addWGNode(
             nodeType = NodeType.GROUP,
-            condition = condition
+            condition = condition,
         )
     }
 }

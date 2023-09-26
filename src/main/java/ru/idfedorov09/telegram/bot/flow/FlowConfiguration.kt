@@ -50,7 +50,9 @@ open class FlowConfiguration(
                 whenComplete {
                     group(condition = { exp.botStage == BotStage.OFFLINE }) {
                     }
-                    group(condition = { exp.botStage == BotStage.REGISTRATION }) {
+                    group(condition = { exp.botStage == BotStage.CAP_REGISTRATION }) {
+                    }
+                    group(condition = { exp.botStage == BotStage.TEAM_REGISTRATION }) {
                     }
                     group(condition = { exp.botStage == BotStage.GAME }) {
                         fetch(topFetcher)

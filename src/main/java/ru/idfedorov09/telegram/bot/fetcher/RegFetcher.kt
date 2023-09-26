@@ -40,7 +40,7 @@ class RegFetcher(
             RegistrationStage.CAP_REGISTRATION -> {
                 when (userResponse.userResponseType) {
                     UserResponseType.MESSAGE_RESPONSE -> {
-                        val teamName = userResponse.message?.replace(" ", "") ?: return
+                        val teamName = userResponse.messageText?.replace(" ", "") ?: return
 
                         teamRepository.findAll()
                             .forEach { team ->

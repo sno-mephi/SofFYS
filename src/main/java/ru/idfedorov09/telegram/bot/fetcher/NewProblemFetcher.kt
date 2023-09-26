@@ -58,7 +58,7 @@ class NewProblemFetcher(
             return
         }
         team.problemsPool.add(problemId)
-        teamRepository.save(team.copy(problemsPool = team.problemsPool))
+        teamRepository.save(team)
 
         userInfoRepository.findAll()
             .filter { it.teamId == teamId }

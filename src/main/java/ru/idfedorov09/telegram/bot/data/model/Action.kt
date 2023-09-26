@@ -18,9 +18,9 @@ data class Action(
     @Column(name = "problem_id")
     val problemId: Long? = null,
 
-    @Column(name = "correct_answer")
-    val correctAnswer: Boolean? = null,
+    @Column(name = "is_correct_answer")
+    val isCorrectAnswer: Boolean? = null,
 
-    @Column(name = "correct_answer_number") // заполняется только для действия аппеляция
-    val correctAnswerNumber: Long? = null,
+    @Column(name = "correct_answer_attempt") // заполняется только для действия аппеляция
+    val correctAnswerAttempt: Long? = null,
 )

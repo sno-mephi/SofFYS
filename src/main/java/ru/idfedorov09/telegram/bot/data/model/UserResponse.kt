@@ -15,4 +15,5 @@ data class UserResponse(
     val receiveTime: LocalDateTime, // время в котрое пришло обновление
     val problemId: Long?, // id задачи на которой завязан ответ; null если не завязан
     val answer: String?, // id ответа на задачу, null если это не обновление на ответ
+    val attemptAnswerNumber: Long?, // номер попытки ответа (1 или 2), null если это не ответ
 )

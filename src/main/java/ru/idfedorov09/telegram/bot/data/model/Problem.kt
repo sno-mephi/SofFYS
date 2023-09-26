@@ -27,7 +27,7 @@ data class Problem(
      * Хэш тг картинки условия задачи
      */
     @Column(name = "problem_hash", columnDefinition = "TEXT")
-    val problemHash: String? = null
+    val problemHash: String? = null,
 ) {
     /**
      * проверяет, является ли anotherAnswer ответом

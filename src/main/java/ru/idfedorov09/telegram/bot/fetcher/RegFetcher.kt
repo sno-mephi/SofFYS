@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import ru.idfedorov09.telegram.bot.data.enums.BotStage
+import ru.idfedorov09.telegram.bot.data.enums.RegistrationStage
 import ru.idfedorov09.telegram.bot.data.enums.UserResponseType
 import ru.idfedorov09.telegram.bot.data.model.Team
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
@@ -35,8 +36,8 @@ class RegFetcher(
     ) {
         val tui = userResponse.initiator.tui ?: return
 
-        when (exp.botStage) {
-            BotStage.CAP_REGISTRATION -> {
+        when (exp.registrationStage) {
+            RegistrationStage.CAP_REGISTRATION -> {
                 when (userResponse.userResponseType) {
                     UserResponseType.MESSAGE_RESPONSE -> {
                         val teamName = userResponse.message?.replace(" ", "") ?: return
@@ -83,7 +84,7 @@ class RegFetcher(
                 }
             }
 
-            BotStage.TEAM_REGISTRATION -> {
+            RegistrationStage.TEAM_REGISTRATION -> {
                 val answer = update.callbackQuery.data
                 val thisUser = userInfoRepository.findByTui(tui) ?: return
                     userInfoRepository.save(

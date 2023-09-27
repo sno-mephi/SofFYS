@@ -31,7 +31,7 @@ class UserRegFetcher(
         exp: ExpContainer,
         update: Update,
     ) {
-        if (exp.TEAM_REGISTRATION_CLOSED_NOW) {
+        if (!exp.CAP_REGISTRATION_CLOSED_NOW) {
             return
         }
 
@@ -44,7 +44,7 @@ class UserRegFetcher(
                             tui,
                             "Выберите одну из команд:",
                         ).also {
-                            it.replyMarkup = createChooseKeyboard(teamRepository)
+                            it.replyMarkup = createChooseKeyboard()
                         },
                     )
             }
@@ -54,9 +54,7 @@ class UserRegFetcher(
     private fun createKeyboard(keyboard: List<List<InlineKeyboardButton>>) =
         InlineKeyboardMarkup().also { it.keyboard = keyboard }
 
-    private fun createChooseKeyboard(
-        teamRepository: TeamRepository,
-    ): InlineKeyboardMarkup {
+    private fun createChooseKeyboard(): InlineKeyboardMarkup {
         val keyboardList = mutableListOf<List<InlineKeyboardButton>>()
         teamRepository.findAll().forEach { team ->
             keyboardList.add(

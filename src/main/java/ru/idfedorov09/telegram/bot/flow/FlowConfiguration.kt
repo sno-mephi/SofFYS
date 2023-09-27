@@ -3,16 +3,7 @@ package ru.idfedorov09.telegram.bot.flow
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.idfedorov09.telegram.bot.data.enums.BotStage
-import ru.idfedorov09.telegram.bot.fetcher.AdminCommandsFetcher
-import ru.idfedorov09.telegram.bot.fetcher.AnswerFetcher
-import ru.idfedorov09.telegram.bot.fetcher.CommandValidateResponseFetcher
-import ru.idfedorov09.telegram.bot.fetcher.NewProblemFetcher
-import ru.idfedorov09.telegram.bot.fetcher.StageResolveFetcher
-import ru.idfedorov09.telegram.bot.fetcher.StateFetcher
-import ru.idfedorov09.telegram.bot.fetcher.TopFetcher
-import ru.idfedorov09.telegram.bot.fetcher.RegFetcher
-import ru.idfedorov09.telegram.bot.fetcher.UserRegFetcher
-import ru.idfedorov09.telegram.bot.fetcher.PoolFetcher
+import ru.idfedorov09.telegram.bot.fetcher.*
 
 /**
  * Основной класс, в котором строится последовательность вычислений (граф)
@@ -29,6 +20,8 @@ open class FlowConfiguration(
     private val answerFetcher: AnswerFetcher,
     private val userRegFetcher: UserRegFetcher,
     private val poolFetcher: PoolFetcher,
+    private val apealFetcher: ApealFetcher,
+    private val adminComfirmApealFetcher: AdminComfirmApealFetcher,
 ) {
 
     /**
@@ -67,10 +60,13 @@ open class FlowConfiguration(
                         fetch(answerFetcher)
                     }
                     group(condition = { exp.botStage == BotStage.APPEAL }) {
+                        fetch(apealFetcher)
+                        fetch(adminComfirmApealFetcher)
                         fetch(topFetcher)
                     }
                     group(condition = { exp.botStage == BotStage.AFTER_APPEAL }) {
                         fetch(topFetcher)
+                        fetch(adminComfirmApealFetcher)
                     }
                 }
                 fetch(stateFetcher)

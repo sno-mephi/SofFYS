@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
+import ru.idfedorov09.telegram.bot.data.model.IsAnswer
 import ru.idfedorov09.telegram.bot.data.model.Team
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
 import ru.idfedorov09.telegram.bot.data.repo.ProblemRepository
@@ -29,26 +30,28 @@ class AnswerFetcher(
     fun doFetch(
         userResponse: UserResponse,
         bot: TelegramPollingBot,
-    ) {
-        if (userResponse.action != ResponseAction.SEND_ANSWER) return
+    ): IsAnswer {
+        if (userResponse.action != ResponseAction.SEND_ANSWER) return IsAnswer()
         val user = userResponse.initiator
-        val problemId = userResponse.problemId ?: return
-        val team = userResponse.initiatorTeam ?: return
-        val tui = user.tui ?: return
-        val attemptNumber = userResponse.attemptAnswerNumber ?: return
-        val answer = userResponse.answer ?: return
+        val problemId = userResponse.problemId ?: return IsAnswer()
+        val team = userResponse.initiatorTeam ?: return IsAnswer()
+        val tui = user.tui ?: return IsAnswer()
+        val attemptNumber = userResponse.attemptAnswerNumber ?: return IsAnswer()
+        val answer = userResponse.answer?.lowercase() ?: return IsAnswer()
         val teamId = team.id
 
-        if (!user.isCaptain) return
+
+        if (!user.isCaptain) return IsAnswer()
         if (problemId in team.completedProblems) {
             bot.execute(SendMessage(tui, "Вы уже завершили эту задачу"))
-            return
+            return IsAnswer()
         }
         if (problemId !in team.problemsPool) {
             bot.execute(SendMessage(tui, "Вы еще не решаете эту задачу"))
-            return
+            return IsAnswer()
         }
-        if (problemRepository.findById(problemId).get().isAnswer(answer)) {
+        val isAnswer = problemRepository.findById(problemId).get().isAnswer(answer)
+        if (isAnswer) {
             val point = problemRepository.findById(problemId).get().cost?.div(attemptNumber)
             teamRepository.save(team.copy(points = team.points + point!!))
             itIsOver(team, problemId)
@@ -75,6 +78,7 @@ class AnswerFetcher(
         ).document.fileId
 
         teamRepository.save(team.copy(lastBoardHash = boardHash))
+        return IsAnswer(isAnswer)
     }
     private fun itIsOver(team: Team, problemId: Long) {
         team.problemsPool.remove(problemId)

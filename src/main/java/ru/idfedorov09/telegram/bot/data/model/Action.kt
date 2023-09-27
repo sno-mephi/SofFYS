@@ -18,6 +18,9 @@ data class Action(
     @Column(name = "problem_id")
     val problemId: Long? = null,
 
+    @Column(name = "answer")
+    val answer: String? = null,
+
     @Column(name = "is_correct_answer")
     val isCorrectAnswer: Boolean? = null,
 

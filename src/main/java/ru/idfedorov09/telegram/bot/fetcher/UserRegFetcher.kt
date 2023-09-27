@@ -38,15 +38,16 @@ class UserRegFetcher(
         userInfoRepository.findAll()
             .forEach { user ->
                 val tui = user.tui ?: return
-
-                bot.execute(
-                    SendMessage(
-                        tui,
-                        "Выберите одну из команд:",
-                    ).also {
-                        it.replyMarkup = createChooseKeyboard(teamRepository)
-                    },
-                )
+                if (!user.isCaptain) {
+                    bot.execute(
+                        SendMessage(
+                            tui,
+                            "Выберите одну из команд:",
+                        ).also {
+                            it.replyMarkup = createChooseKeyboard(teamRepository)
+                        },
+                    )
+            }
     }
     }
 

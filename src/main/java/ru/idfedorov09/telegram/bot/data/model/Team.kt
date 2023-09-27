@@ -29,4 +29,8 @@ data class Team(
      */
     @Column(name = "last_board_hash", columnDefinition = "TEXT")
     val lastBoardHash: String? = null,
+
+    @ElementCollection
+    @Column(name = "appealed_problems", columnDefinition = "BIGINT[]")
+    val appealedProblems: MutableList<Long> = mutableListOf(),
 )

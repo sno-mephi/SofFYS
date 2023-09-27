@@ -13,5 +13,5 @@ data class ExpContainer(
     var EXP_COMMANDS: Boolean = true, // включение экспериментальных команд
     var IS_VALID_COMMAND: Boolean = false, // валидная ли команда пришла
     var IS_STAGE_CHANGED: Boolean = false, // было ли изменено состояние бота
-    var TEAM_REGISTRATION_CLOSED_NOW: Boolean = true, // регистрация всех пользователей (В данный момент она закрытаБ открывается один раз за игру!!!
+    var CAP_REGISTRATION_CLOSED_NOW: Boolean = false, // регистрация всех пользователей (В данный момент она закрытаБ открывается один раз за игру!!!
 )

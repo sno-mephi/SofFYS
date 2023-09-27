@@ -40,6 +40,9 @@ class RegFetcher(
             RegistrationStage.CAP_REGISTRATION -> {
                 when (userResponse.userResponseType) {
                     UserResponseType.MESSAGE_RESPONSE -> {
+                        if (userResponse.initiator.isCaptain) {
+                            return
+                        }
                         selectTeamName(tui, userResponse, bot)
                     }
 

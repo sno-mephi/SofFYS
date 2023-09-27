@@ -54,6 +54,9 @@ class RegFetcher(
             }
 
             RegistrationStage.TEAM_REGISTRATION -> {
+                if (userResponse.userResponseType != UserResponseType.BUTTON_RESPONSE) {
+                    return
+                }
                 messageFromNoCap(tui, update)
             }
 

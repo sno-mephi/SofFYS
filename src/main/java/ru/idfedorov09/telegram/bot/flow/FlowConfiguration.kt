@@ -11,6 +11,8 @@ import ru.idfedorov09.telegram.bot.fetcher.StageResolveFetcher
 import ru.idfedorov09.telegram.bot.fetcher.StateFetcher
 import ru.idfedorov09.telegram.bot.fetcher.TopFetcher
 import ru.idfedorov09.telegram.bot.fetcher.RegFetcher
+import ru.idfedorov09.telegram.bot.fetcher.UserRegFetcher
+import ru.idfedorov09.telegram.bot.fetcher.PoolFetcher
 
 /**
  * Основной класс, в котором строится последовательность вычислений (граф)
@@ -25,6 +27,8 @@ open class FlowConfiguration(
     private val regFetcher: RegFetcher,
     private val newProblemFetcher: NewProblemFetcher,
     private val answerFetcher: AnswerFetcher,
+    private val userRegFetcher: UserRegFetcher,
+    private val poolFetcher: PoolFetcher,
 ) {
 
     /**
@@ -54,9 +58,11 @@ open class FlowConfiguration(
                     }
                     group(condition = { exp.botStage == BotStage.REGISTRATION }) {
                         fetch(regFetcher)
+                        fetch(userRegFetcher)
                     }
                     group(condition = { exp.botStage == BotStage.GAME }) {
                         fetch(topFetcher)
+                        fetch(poolFetcher)
                         fetch(newProblemFetcher)
                         fetch(answerFetcher)
                     }

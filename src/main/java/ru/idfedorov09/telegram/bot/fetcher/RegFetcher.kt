@@ -40,11 +40,11 @@ class RegFetcher(
             RegistrationStage.CAP_REGISTRATION -> {
                 when (userResponse.userResponseType) {
                     UserResponseType.MESSAGE_RESPONSE -> {
-                        messageFromCap(tui, userResponse, bot)
+                        selectTeamName(tui, userResponse, bot)
                     }
 
                     UserResponseType.BUTTON_RESPONSE -> {
-                        buttonFromCap(tui, update)
+                        confirmTeamCreate(tui, update)
                     }
                     else -> return
                 }
@@ -72,12 +72,12 @@ class RegFetcher(
         ),
     )
 
-    private fun messageFromCap(
+    private fun selectTeamName(
         tui: String,
         userResponse: UserResponse,
         bot: TelegramPollingBot,
     ) {
-        val teamName = userResponse.messageText?.replace(" ", "") ?: return
+        val teamName = userResponse.messageText?.trim() ?: return
 
         teamRepository.findAll()
             .forEach { team ->
@@ -90,7 +90,7 @@ class RegFetcher(
         bot.execute(
             SendMessage(
                 tui,
-                "Вы точно хотите заоегестрировать команду **$teamName**?",
+                "Вы точно хотите зарегистрировать команду **$teamName**?",
             ).also {
                 it.enableMarkdown(true)
                 it.replyMarkup = createChooseKeyboard(teamName)
@@ -98,12 +98,12 @@ class RegFetcher(
         )
     }
 
-    private fun buttonFromCap(
+    private fun confirmTeamCreate(
         tui: String,
         update: Update,
     ) {
         val answer = update.callbackQuery.data
-        if (answer.substring(0, 12) == "team_confirm") {
+        if (answer.startsWith("team_confirm")) {
             val thisUser = userInfoRepository.findByTui(tui) ?: return
 
             val savedTeam: Team =
@@ -129,7 +129,7 @@ class RegFetcher(
         val thisUser = userInfoRepository.findByTui(tui) ?: return
         userInfoRepository.save(
             thisUser.copy(
-                teamId = answer.toLong(),
+                teamId = answer.toLongOrNull(),
             ),
         )
     }

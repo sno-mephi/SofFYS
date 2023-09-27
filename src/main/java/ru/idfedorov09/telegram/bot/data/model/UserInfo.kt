@@ -22,6 +22,9 @@ data class UserInfo(
     @Column(name = "is_captain")
     val isCaptain: Boolean = false,
 
+    @Column(name = "full_name", columnDefinition = "TEXT")
+    val fullName: String? = null,
+
     @Column(name = "study_group", columnDefinition = "TEXT")
     val studyGroup: String? = null,
 )

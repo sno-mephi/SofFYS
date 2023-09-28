@@ -39,7 +39,7 @@ class PoolFetcher(
         problemsPool.forEach { probId ->
             val problem = problemRepository.findById(probId).get()
             answerMessage += "\n$i. '${problem.category} ${problem.cost}' " +
-                "(${actionRepository.countAnswer(team.id, probId)}/2)"
+                "(${team.id?.let { actionRepository.countAnswer(it, probId) }}/2)"
             i++
         }
         bot.execute(SendMessage(tui, answerMessage).also { it.enableMarkdown(true) })

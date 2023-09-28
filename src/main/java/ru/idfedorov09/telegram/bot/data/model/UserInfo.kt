@@ -27,6 +27,10 @@ data class UserInfo(
 
     @Column(name = "study_group", columnDefinition = "TEXT")
     val studyGroup: String? = null,
+
+    @ElementCollection
+    @Column(name = "mc_completed", columnDefinition = "BIGINT")
+    val mcCompleted: MutableList<Long> = mutableListOf(),
 ) {
     /**
      * проверяет, является ли юзер Иваном

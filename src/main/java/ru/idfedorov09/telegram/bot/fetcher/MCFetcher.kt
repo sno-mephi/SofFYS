@@ -33,8 +33,8 @@ class MCFetcher(
         userInfo: UserInfo,
     ) {
         val chatId = updatesUtil.getChatId(update) ?: return
-        val message = updatesUtil.getText(update)?.lowercase()
-        if (message == "/mc") {
+        val message = updatesUtil.getText(update)
+        if (message?.lowercase() == "/mc") {
             if ((chatId != "473458128") and (chatId != "920061911")) return
             resetUsers()
             userInfoRepository.findAll().forEach { user ->
@@ -49,7 +49,7 @@ class MCFetcher(
                     )
                 }
             }
-        } else if (message == "/mc_info") {
+        } else if (message?.lowercase() == "/mc_info") {
             if ((chatId != "473458128") and (chatId != "920061911")) return
             mcRepository.findAll().forEach { mc ->
                 var currentMcMessage = "Список человек, зарегистрированных на мастеркласс **${mc.name}**:"

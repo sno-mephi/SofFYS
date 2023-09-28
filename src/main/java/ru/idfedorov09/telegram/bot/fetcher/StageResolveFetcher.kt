@@ -4,7 +4,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import ru.idfedorov09.telegram.bot.data.PropertyNames
-import ru.idfedorov09.telegram.bot.data.enums.BotStage
+import ru.idfedorov09.telegram.bot.data.enums.BotGameStage
+import ru.idfedorov09.telegram.bot.data.enums.GlobalStage
+import ru.idfedorov09.telegram.bot.data.enums.RegistrationStage
 import ru.idfedorov09.telegram.bot.flow.ExpContainer
 import ru.idfedorov09.telegram.bot.flow.InjectData
 import ru.idfedorov09.telegram.bot.service.RedisService
@@ -33,9 +35,22 @@ class StageResolveFetcher(
             setStage(updatesUtil, update, redisService, exp)
         }
 
-        exp.botStage = redisService.getSafe(PropertyNames.STAGE_PROPERTY)
-            ?.let { BotStage.valueOf(it) }
-            ?: BotStage.OFFLINE
+        // получаем состояние игры бота
+        exp.botGameStage = redisService.getSafe(PropertyNames.STAGE_PROPERTY)
+            ?.let { BotGameStage.valueOf(it) }
+            ?: BotGameStage.OFFLINE
+
+        // получаем состояние регистрации в игре
+        exp.registrationStage = redisService.getSafe(PropertyNames.STAGE_GAME_REG_PROPERTY)
+            ?.let { RegistrationStage.valueOf(it) }
+            ?: RegistrationStage.NO_REGISTRATION
+
+        // получаем глобальное состояние бота
+        exp.globalStage = redisService.getSafe(PropertyNames.GLOBAL_STAGE_PROPERTY)
+            ?.let { GlobalStage.valueOf(it) }
+            ?: GlobalStage.REGISTRATION
+
+        log.info("exp after stageResolveFetcher: {}", exp)
     }
 
     /**
@@ -55,7 +70,7 @@ class StageResolveFetcher(
         if (
             Regex("/set_stage\\s+\\w+").matches(message) &&
             message.split(" ").size == 2 &&
-            BotStage.contains(message.split(" ")[1]) &&
+            BotGameStage.contains(message.split(" ")[1]) &&
             chatId == ADMIN_ID
         ) {
             redisService.setValue(PropertyNames.STAGE_PROPERTY, message.split(" ")[1])

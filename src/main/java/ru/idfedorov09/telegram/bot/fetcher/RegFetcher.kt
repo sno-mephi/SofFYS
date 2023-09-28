@@ -19,7 +19,6 @@ import ru.idfedorov09.telegram.bot.service.RedisService
 
 @Component
 class RegFetcher(
-    private val redisService: RedisService,
     private val teamRepository: TeamRepository,
     private val userInfoRepository: UserInfoRepository,
 ) : GeneralFetcher() {
@@ -64,8 +63,8 @@ class RegFetcher(
         }
     }
 
-            private fun createKeyboard(keyboard: List<List<InlineKeyboardButton>>) =
-                 InlineKeyboardMarkup().also { it.keyboard = keyboard }
+    private fun createKeyboard(keyboard: List<List<InlineKeyboardButton>>) =
+        InlineKeyboardMarkup().also { it.keyboard = keyboard }
 
     private fun createChooseKeyboard(
         teamName: String?,

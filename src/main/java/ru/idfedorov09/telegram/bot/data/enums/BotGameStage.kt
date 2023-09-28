@@ -3,7 +3,7 @@ package ru.idfedorov09.telegram.bot.data.enums
 /**
  * Перечисление с примерами возможного статуса занятности бота
  */
-enum class BotStage {
+enum class BotGameStage {
     REGISTRATION,
     GAME,
     APPEAL,
@@ -14,6 +14,6 @@ enum class BotStage {
     companion object {
         fun contains(
             stringValue: String,
-        ) = BotStage.values().map { it.name }.contains(stringValue)
+        ) = BotGameStage.values().map { it.name }.contains(stringValue)
     }
 }

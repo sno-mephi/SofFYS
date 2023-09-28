@@ -47,8 +47,8 @@ class UserRegFetcher(
                             it.replyMarkup = createChooseKeyboard()
                         },
                     )
+                }
             }
-    }
     }
 
     private fun createKeyboard(keyboard: List<List<InlineKeyboardButton>>) =
@@ -59,8 +59,8 @@ class UserRegFetcher(
         teamRepository.findAll().forEach { team ->
             keyboardList.add(
                 listOf(
-                InlineKeyboardButton("${team.teamName}").also { it.callbackData = "${team.id}" },
-            ),
+                    InlineKeyboardButton("${team.teamName}").also { it.callbackData = "${team.id}" },
+                ),
             )
         }
         return createKeyboard(keyboardList)

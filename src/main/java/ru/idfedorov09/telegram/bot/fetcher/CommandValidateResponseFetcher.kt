@@ -3,6 +3,7 @@ package ru.idfedorov09.telegram.bot.fetcher
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
+import ru.idfedorov09.telegram.bot.data.enums.RegistrationStage
 import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
 import ru.idfedorov09.telegram.bot.data.enums.UserResponseType
 import ru.idfedorov09.telegram.bot.data.model.UserInfo
@@ -37,10 +38,15 @@ class CommandValidateResponseFetcher(
         val currentTime = LocalDateTime.now()
         val message = updatesUtil.getText(update)?.lowercase()
         val command = message?.split(" ")?.get(0)
-        val chatId = updatesUtil.getChatId(update)
+        val chatId = updatesUtil.getChatId(update) ?: return null
 
-        // TODO: а что если нажата кнопка? message==null по идее. подумать!
-        if (message == null || chatId == null) return null
+        if (
+            message == null &&
+            !update.hasCallbackQuery() &&
+            !(exp.registrationStage == RegistrationStage.CAP_REGISTRATION && message!=null)
+        ) {
+            return null
+        }
 
         val isOtherCommand = ResponseAction.entries
             .mapNotNull { it.textForm }
@@ -58,6 +64,7 @@ class CommandValidateResponseFetcher(
                 receiveTime = currentTime,
                 problemId = extractProblemId(message),
                 answer = null,
+                messageText = message,
             )
             isAnswerToProblem(message) -> UserResponse(
                 initiator = initiator,
@@ -67,6 +74,7 @@ class CommandValidateResponseFetcher(
                 receiveTime = currentTime,
                 problemId = extractProblemId(message),
                 answer = extractAnswer(message),
+                messageText = message,
             )
             isOtherCommand -> UserResponse(
                 initiator = initiator,
@@ -76,6 +84,7 @@ class CommandValidateResponseFetcher(
                 receiveTime = currentTime,
                 problemId = extractProblemId(message),
                 answer = null,
+                messageText = message,
             )
             else -> null
         }

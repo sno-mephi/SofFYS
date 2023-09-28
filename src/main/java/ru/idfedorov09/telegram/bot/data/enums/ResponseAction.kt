@@ -5,7 +5,8 @@ enum class ResponseAction(
 ) {
     // админские
     DEFAULT_VALUE("default_value"),
-    START_REGISTRATION("/reg_start"), // OFF TO REG
+    START_REGISTRATION("/game_reg_start"), // OFF TO REG
+    START_TEAMS_INVITE("/teams_invite"),
     START_GAME("/game_start"), // REG TO GAME
     START_APPEAL("/appeal_start"), // GAME to APPEAL
     FINISH_APPEAL("/appeal_finish"), // APPEAL TO AFTER_APPEAL Конец апелляции, подведение результатов

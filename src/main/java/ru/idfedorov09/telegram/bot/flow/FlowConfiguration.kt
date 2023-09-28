@@ -2,8 +2,11 @@ package ru.idfedorov09.telegram.bot.flow
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import ru.idfedorov09.telegram.bot.data.enums.BotStage
+import ru.idfedorov09.telegram.bot.data.enums.BotGameStage
+import ru.idfedorov09.telegram.bot.data.enums.GlobalStage
 import ru.idfedorov09.telegram.bot.fetcher.*
+import ru.idfedorov09.telegram.bot.fetcher.global.GlobalRegistrationFetcher
+import ru.idfedorov09.telegram.bot.fetcher.global.UserInfoPreActualizeFetcher
 
 /**
  * Основной класс, в котором строится последовательность вычислений (граф)
@@ -23,6 +26,8 @@ open class FlowConfiguration(
     private val apealFetcher: ApealFetcher,
     private val adminComfirmApealFetcher: AdminComfirmApealFetcher,
     private val actionFetcher: ActionFetcher,
+    private val userInfoPreActualizeFetcher: UserInfoPreActualizeFetcher,
+    private val globalRegistrationFetcher: GlobalRegistrationFetcher,
 ) {
 
     /**
@@ -43,35 +48,50 @@ open class FlowConfiguration(
     private fun FlowBuilder.buildFlow() {
         group {
             fetch(stageResolveFetcher)
-            fetch(commandValidateResponseFetcher)
-            // если пришедшая команда валидная, то работаем дальше
-            whenComplete(condition = { exp.IS_VALID_COMMAND }) {
-                fetch(adminCommandsFetcher)
-                whenComplete {
-                    group(condition = { exp.botStage == BotStage.OFFLINE }) {
-                    }
-                    group(condition = { exp.botStage == BotStage.REGISTRATION }) {
-                        fetch(regFetcher)
-                        fetch(userRegFetcher)
-                    }
-                    group(condition = { exp.botStage == BotStage.GAME }) {
-                        fetch(topFetcher)
-                        fetch(poolFetcher)
-                        fetch(newProblemFetcher)
-                        fetch(answerFetcher)
-                    }
-                    group(condition = { exp.botStage == BotStage.APPEAL }) {
-                        fetch(apealFetcher)
-                        fetch(adminComfirmApealFetcher)
-                        fetch(topFetcher)
-                    }
-                    group(condition = { exp.botStage == BotStage.AFTER_APPEAL }) {
-                        fetch(topFetcher)
-                        fetch(adminComfirmApealFetcher)
-                    }
-                    fetch(stateFetcher)
+            fetch(userInfoPreActualizeFetcher)
+            // если chat_id нет то ниче не делаем
+            whenComplete(condition = { exp.hasChatId }) {
+                // часть графа отвечающая за регистрацию
+                group(condition = { exp.globalStage == GlobalStage.REGISTRATION }) {
+                    fetch(globalRegistrationFetcher)
                 }
-              whenComplete { fetch(actionFetcher) } 
+
+                // часть графа отвечающая за орг моменты (регистрация на МК, мб еще какая-то хрень)
+                group(condition = { exp.globalStage == GlobalStage.ORGANISATION_STAGE }) {
+                    TODO()
+                }
+
+                // Часть графа отвечающая за игру
+                group(condition = { exp.globalStage == GlobalStage.MATH_GAME }) {
+                    fetch(commandValidateResponseFetcher)
+                    // если пришедшая команда валидная, то работаем дальше
+                    whenComplete(condition = { exp.IS_VALID_COMMAND }) {
+                        fetch(adminCommandsFetcher)
+                        whenComplete {
+                            group(condition = { exp.botGameStage == BotGameStage.REGISTRATION }) {
+                                fetch(regFetcher)
+                                fetch(userRegFetcher)
+                            }
+                            group(condition = { exp.botGameStage == BotGameStage.GAME }) {
+                                fetch(topFetcher)
+                                fetch(poolFetcher)
+                                fetch(newProblemFetcher)
+                                fetch(answerFetcher)
+                            }
+                            group(condition = { exp.botGameStage == BotGameStage.APPEAL }) {
+                                fetch(apealFetcher)
+                                fetch(adminComfirmApealFetcher)
+                                fetch(topFetcher)
+                            }
+                            group(condition = { exp.botGameStage == BotGameStage.AFTER_APPEAL }) {
+                                fetch(topFetcher)
+                                fetch(adminComfirmApealFetcher)
+                            }
+                            fetch(stateFetcher)
+                        }
+                        whenComplete { fetch(actionFetcher) }
+                    }
+                }
             }
         }
     }

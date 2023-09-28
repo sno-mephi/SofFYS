@@ -30,7 +30,8 @@ class MCFetcher(
         val message = updatesUtil.getText(update)?.lowercase()
         if (message == "/mc") {
             if ((chatId != "473458128") and (chatId != "920061911")) return
-            resetUsers()
+            // TODO: НЕ РАБОТАЕТ!!! мб отдельный сервис создать хз, подумать как починить)))
+            resetMcUsers()
             userInfoRepository.findAll().forEach { user ->
                 user.tui?.let {
                     bot.execute(
@@ -103,18 +104,18 @@ class MCFetcher(
         return createKeyboard(keyboardList)
     }
 
-    private fun checkMC(id: Long): Boolean {
-        mcRepository.findAll().forEach { it ->
-            if (id in it.users) return false
+    /**
+     * проверяет, зарегистрирован ли пользователь на МК
+     */
+    private fun checkMC(userId: Long): Boolean {
+        mcRepository.findAll().forEach {
+            if (userId in it.users) return false
         }
         return true
     }
 
-    private fun resetUsers() {
-        mcRepository.findAll().forEach() {
-            mcRepository.save(
-                it.copy(users = mutableListOf()),
-            )
-        }
+    open fun resetMcUsers() {
+        val updatedMc = mcRepository.findAll().map { it.copy(users = mutableListOf()) }
+        mcRepository.saveAll(updatedMc)
     }
 }

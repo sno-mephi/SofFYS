@@ -46,7 +46,7 @@ class GlobalRegistrationFetcher(
             bot.execute(
                 SendMessage(
                     chatId,
-                    "Введите корректный номер группы для регистрации",
+                    "Введи корректный номер группы для регистрации",
                 ),
             )
             return
@@ -56,7 +56,7 @@ class GlobalRegistrationFetcher(
         bot.execute(
             SendMessage(
                 chatId,
-                "Введи свое ФИО для завершения регестрации!",
+                "Введи свое ФИО для завершения регистрации!",
             ),
         )
     }

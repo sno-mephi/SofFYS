@@ -50,8 +50,7 @@ class MCFetcher(
                 var currentMcMessage = "Список человек, зарегистрированных на мастеркласс **${mc.name}**:"
                 if (mc.users.isEmpty()) {
                     currentMcMessage = "На мастеркласс **${mc.name}** никто не зареган"
-                }
-                else {
+                } else {
                     var i = 1
                     mc.users.forEach {
                         val currentUser = userInfoRepository.findById(it).get()
@@ -62,8 +61,8 @@ class MCFetcher(
                 bot.execute(
                     SendMessage(
                         chatId,
-                        currentMcMessage
-                    ).also { it.enableMarkdown(true) }
+                        currentMcMessage,
+                    ).also { it.enableMarkdown(true) },
                 )
             }
         } else {

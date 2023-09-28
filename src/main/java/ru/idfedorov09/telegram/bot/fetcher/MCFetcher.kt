@@ -1,5 +1,6 @@
 package ru.idfedorov09.telegram.bot.fetcher
 
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -18,6 +19,11 @@ class MCFetcher(
     private val userInfoRepository: UserInfoRepository,
     private val mcRepository: MCRepository,
 ) : GeneralFetcher() {
+
+    companion object {
+        private val log = LoggerFactory.getLogger(this.javaClass)
+    }
+
     @InjectData
     fun doFetch(
         update: Update,
@@ -45,7 +51,6 @@ class MCFetcher(
             }
         } else if (message == "/mc_info") {
             if ((chatId != "473458128") and (chatId != "920061911")) return
-
             mcRepository.findAll().forEach { mc ->
                 var currentMcMessage = "Список человек, зарегистрированных на мастеркласс **${mc.name}**:"
                 if (mc.users.isEmpty()) {

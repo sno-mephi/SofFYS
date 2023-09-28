@@ -33,13 +33,13 @@ class PoolFetcher(
             bot.execute(SendMessage(tui, "В пуле нет задач"))
             return
         }
-        val team = userResponse.initiatorTeam ?: return
+        val team = userResponse.initiatorTeam
         var i = 1
         var answerMessage = "Задачи в пуле:"
         problemsPool.forEach { probId ->
             val problem = problemRepository.findById(probId).get()
             answerMessage += "\n$i. '${problem.category} ${problem.cost}' " +
-                    "(${actionRepository.countAnswer(team.id, probId)}/2)"
+                "(${actionRepository.countAnswer(team.id, probId)}/2)"
             i++
         }
         bot.execute(SendMessage(tui, answerMessage).also { it.enableMarkdown(true) })

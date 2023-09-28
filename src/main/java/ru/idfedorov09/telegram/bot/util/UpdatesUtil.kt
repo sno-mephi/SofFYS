@@ -22,11 +22,11 @@ class UpdatesUtil {
         private val log = LoggerFactory.getLogger(this.javaClass)
     }
 
-    fun getChatId(update: Update): String? {
+    fun getChatId(update: Update?): String? {
         return getByPattern(update, "\"chat\"\\s*:\\s*\\{\"id\"\\s*:\\s*(-?\\d+)")
     }
 
-    fun getText(update: Update): String? {
+    fun getText(update: Update?): String? {
         var text = getByPattern(update, "\"text\"\\s*:\\s*\"(.+?)\"")
         if (text == null) text = getByPattern(update, "\"caption\"\\s*:\\s*\"(.+?)\"")
         return text

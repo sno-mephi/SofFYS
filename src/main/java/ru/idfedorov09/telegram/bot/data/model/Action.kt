@@ -1,19 +1,25 @@
 package ru.idfedorov09.telegram.bot.data.model
 
 import jakarta.persistence.*
+import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
 import java.time.LocalDateTime
 
 @Entity
 @Table(name = "actions_table")
 data class Action(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    val id: Long = -1,
+    
     @Column(name = "team_id")
     val teamId: Long? = null,
 
     @Column(name = "time")
-    val time: LocalDateTime,
+    val time: LocalDateTime? = null,
 
     @Column(name = "action", columnDefinition = "TEXT")
-    val action: String? = null,
+    val action: ResponseAction? = null,
 
     @Column(name = "problem_id")
     val problemId: Long? = null,

@@ -69,13 +69,13 @@ class MCFetcher(
             if (!update.hasCallbackQuery()) return
             if (!update.callbackQuery.data.startsWith("mc")) return
             val mcId = update.callbackQuery.data.removePrefix("mc_")
-            if (mcId.toLong() in userInfo.mcCompleted) {
-                bot.execute(SendMessage(chatId, "Ты уже проходил этот мастеркласс. Выбери другой!"))
-                return
-            }
             val mc = mcRepository.findById(mcId.toLong()).get()
             if (!checkMC(userInfo.id)) {
                 bot.execute(SendMessage(chatId, "У вас слишком большие запросы! ⛔ Вы уже записаны на мастеркласс!"))
+                return
+            }
+            if (mcId.toLong() in userInfo.mcCompleted) {
+                bot.execute(SendMessage(chatId, "Ты уже проходил этот мастеркласс. Выбери другой!"))
                 return
             }
             if (mc.users.size >= mc.maxUsersCount!!) {
@@ -109,9 +109,9 @@ class MCFetcher(
     /**
      * проверяет, зарегистрирован ли пользователь на МК
      */
-    private fun checkMC(userId: Long): Boolean {
+    private fun checkMC(id: Long): Boolean {
         mcRepository.findAll().forEach {
-            if (userId in it.users) return false
+            if (id in it.users) return false
         }
         return true
     }

@@ -44,7 +44,7 @@ class ApealFetcher(
         val problemId = userResponse.problemId ?: return
         val team = userResponse.initiatorTeam ?: return
 
-        if (!actionRepository.countByTeamIdAndProblemIdAndActionAndIsCorrectAnswer(team.id, problemId) || problemId in team.appealedProblems) {
+        if (!actionRepository.presenceOfIncorrectAnswers(team.id, problemId) || problemId in team.appealedProblems) {
             return
         }
 
@@ -54,13 +54,19 @@ class ApealFetcher(
         val problemCategory = problemRepository.findById(problemId).get().category
         val problemCost = problemRepository.findById(problemId).get().cost
         val realAnswer = problemRepository.findById(problemId).get().answers
+        val teamAnswers = actionRepository.findAnswersByTeamIdAndProblemId(team.id, problemId)
+        var message = "Команда ${team.teamName}. Задача:$problemCategory $problemCost." +
+                "\n Первый ответ команды: ${teamAnswers[0]} "
+
+                    if (teamAnswers.size > 1) {
+            message += "\n второй ответ команды: ${teamAnswers[1]} "
+        } else { message += "\n второй ответ команды: (нету)" }
+
+        message += "\n верый ответ $realAnswer"
         bot.execute(
             SendMessage(
                 "920061911",
-                "Команда ${team.teamName}. Задача:$problemCategory $problemCost." +
-                    "\n Первый ответ команды: " +
-                    "\n второй ответ команды: " +
-                    "\n верый ответ $realAnswer", // TODO добавить ответы команды
+                message,
             ).also {
                 it.replyMarkup = createChooseKeyboard(userResponse)
             },

@@ -6,8 +6,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
+import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
 import ru.idfedorov09.telegram.bot.data.enums.BotGameStage
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
+import ru.idfedorov09.telegram.bot.data.repo.ActionRepository
 import ru.idfedorov09.telegram.bot.data.repo.ProblemRepository
 import ru.idfedorov09.telegram.bot.data.repo.TeamRepository
 import ru.idfedorov09.telegram.bot.data.repo.UserInfoRepository
@@ -20,6 +22,7 @@ class ApealFetcher(
     private val problemRepository: ProblemRepository,
     private val teamRepository: TeamRepository,
     private val userInfoRepository: UserInfoRepository,
+    private val actionRepository: ActionRepository,
 ) : GeneralFetcher() {
     companion object {
         private val log = LoggerFactory.getLogger(this.javaClass)
@@ -41,7 +44,7 @@ class ApealFetcher(
         val problemId = userResponse.problemId ?: return
         val team = userResponse.initiatorTeam ?: return
 
-        if (problemId !in team.completedProblems || problemId in team.appealedProblems) {
+        if (!actionRepository.countByTeamIdAndProblemIdAndActionAndIsCorrectAnswer(team.id, problemId) || problemId in team.appealedProblems) {
             return
         }
 

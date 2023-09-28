@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import ru.idfedorov09.telegram.bot.data.model.Action
 import ru.idfedorov09.telegram.bot.data.model.IsAnswer
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
+import ru.idfedorov09.telegram.bot.data.model.CountActionsByTeamIdAndProblemIdAndAction
 import ru.idfedorov09.telegram.bot.data.repo.ActionRepository
 import ru.idfedorov09.telegram.bot.executor.TelegramPollingBot
 import ru.idfedorov09.telegram.bot.flow.ExpContainer
@@ -24,6 +25,7 @@ class ActionFetcher(
     fun doFetch(
         userResponse: UserResponse,
         isAnswer: IsAnswer,
+        countActionsByTeamIdAndProblemIdAndAction: CountActionsByTeamIdAndProblemIdAndAction,
     ) {
         // TODO: сохранять только нуные нам action
         val action = Action(
@@ -32,7 +34,7 @@ class ActionFetcher(
             action = userResponse.action,
             problemId = userResponse.problemId,
             isCorrectAnswer = isAnswer.isAnswer,
-            correctAnswerAttempt = userResponse.attemptAnswerNumber,
+            correctAnswerAttempt = countActionsByTeamIdAndProblemIdAndAction.countActionsByTeamIdAndProblemIdAndAction,
         )
 
         actionRepository.save(action)

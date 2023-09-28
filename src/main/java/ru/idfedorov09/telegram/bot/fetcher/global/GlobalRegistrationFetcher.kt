@@ -24,12 +24,12 @@ class GlobalRegistrationFetcher(
         bot: TelegramPollingBot,
         exp: ExpContainer,
     ) {
-        val message = updatesUtil.getText(update)?.lowercase()
+        val message = updatesUtil.getText(update)
         val chatId = updatesUtil.getChatId(update) ?: return
 
         exp.isRegistered = false
         when {
-            userInfo.studyGroup == null -> groupNumEnterStage(userInfo, message, chatId, bot)
+            userInfo.studyGroup == null -> groupNumEnterStage(userInfo, message?.lowercase(), chatId, bot)
             userInfo.fullName == null -> fullNameEnterStage(userInfo, message, chatId, bot)
             else -> exp.isRegistered = true // уже базово зареган
         }

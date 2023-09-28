@@ -18,7 +18,8 @@ data class Action(
     @Column(name = "time")
     val time: LocalDateTime? = null,
 
-    @Column(name = "action", columnDefinition = "TEXT")
+    @Enumerated(EnumType.STRING) // Сохранять как строку
+    @Column(name = "action")
     val action: ResponseAction? = null,
 
     @Column(name = "problem_id")

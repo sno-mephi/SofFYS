@@ -28,6 +28,8 @@ open class FlowConfiguration(
     private val actionFetcher: ActionFetcher,
     private val userInfoPreActualizeFetcher: UserInfoPreActualizeFetcher,
     private val globalRegistrationFetcher: GlobalRegistrationFetcher,
+    private val mcFetcher: MCFetcher,
+    private val dailyProblemFetcher: DayProblemFetcher,
 ) {
 
     /**
@@ -54,8 +56,14 @@ open class FlowConfiguration(
                 fetch(globalRegistrationFetcher)
                 // если пользователь не зареган то ливаем
                 whenComplete(condition = { exp.isRegistered }) {
+                    fetch(mcFetcher)
+                    group(condition = { exp.globalStage != GlobalStage.MATH_GAME }) {
+                        fetch(dailyProblemFetcher)
+                    }
+
                     // часть графа отвечающая за орг моменты (регистрация на МК, мб еще какая-то хрень)
                     group(condition = { exp.globalStage == GlobalStage.ORGANISATION_STAGE }) {
+                        // легаси??? чзх
                     }
 
                     // Часть графа отвечающая за игру

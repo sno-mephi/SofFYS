@@ -1,5 +1,6 @@
 package ru.idfedorov09.telegram.bot.fetcher
 
+import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
@@ -11,11 +12,11 @@ import ru.idfedorov09.telegram.bot.flow.ExpContainer
 import ru.idfedorov09.telegram.bot.flow.InjectData
 import ru.idfedorov09.telegram.bot.util.UpdatesUtil
 
-
+@Component
 class MCFetcher(
     private val userInfoRepository: UserInfoRepository,
     private val mcRepository: MCRepository,
-) {
+) : GeneralFetcher() {
     @InjectData
     fun doFetch(
         update: Update,

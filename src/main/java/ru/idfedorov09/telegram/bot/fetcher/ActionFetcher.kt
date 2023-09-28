@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import ru.idfedorov09.telegram.bot.data.model.Action
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
+import ru.idfedorov09.telegram.bot.data.model.IsAnswer
 import ru.idfedorov09.telegram.bot.data.repo.ActionRepository
 import ru.idfedorov09.telegram.bot.data.repo.TeamRepository
 import ru.idfedorov09.telegram.bot.data.repo.UserInfoRepository
@@ -30,6 +31,7 @@ class ActionFetcher(
         bot: TelegramPollingBot,
         exp: ExpContainer,
         update: Update,
+        isAnswer: IsAnswer
     ) {
 
 
@@ -38,7 +40,7 @@ class ActionFetcher(
             time = userResponse.receiveTime,
             action = userResponse.action,
             problemId = userResponse.problemId,
-            isCorrectAnswer = null,
+            isCorrectAnswer = isAnswer.isAnswer,
             correctAnswerAttempt = userResponse.attemptAnswerNumber,
         )
 

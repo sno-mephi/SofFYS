@@ -69,7 +69,7 @@ class MCFetcher(
             if (!update.hasCallbackQuery()) return
             if (!update.callbackQuery.data.startsWith("mc")) return
             val mcId = update.callbackQuery.data.removePrefix("mc_")
-            if (mcId.toLong() in userInfo.mcCompleted){
+            if (mcId.toLong() in userInfo.mcCompleted) {
                 bot.execute(SendMessage(chatId, "Вы уже проходили этот мастеркласс. Выберите другй!"))
                 return
             }
@@ -110,12 +110,11 @@ class MCFetcher(
         return true
     }
 
-    private fun resetUsers(){
-        mcRepository.findAll().forEach(){
+    private fun resetUsers() {
+        mcRepository.findAll().forEach() {
             mcRepository.save(
-                it.copy(users = mutableListOf())
+                it.copy(users = mutableListOf()),
             )
-
         }
     }
 }

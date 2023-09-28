@@ -106,9 +106,12 @@ class MCFetcher(
         return createKeyboard(keyboardList)
     }
 
-    private fun checkMC(id: Long): Boolean {
+    /**
+     * проверяет, зарегистрирован ли пользователь на МК
+     */
+    private fun checkMC(userId: Long): Boolean {
         mcRepository.findAll().forEach {
-            if (id in it.users) return false
+            if (userId in it.users) return false
         }
         return true
     }

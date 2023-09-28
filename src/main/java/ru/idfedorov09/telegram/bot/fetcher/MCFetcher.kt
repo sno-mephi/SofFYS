@@ -30,6 +30,7 @@ class MCFetcher(
         val message = updatesUtil.getText(update)?.lowercase()
         if (message == "/mc") {
             if ((chatId != "473458128") and (chatId != "920061911")) return
+            resetUsers()
             userInfoRepository.findAll().forEach { user ->
                 user.tui?.let {
                     bot.execute(
@@ -46,6 +47,10 @@ class MCFetcher(
             if (!update.hasCallbackQuery()) return
             if (!update.callbackQuery.data.startsWith("mc")) return
             val mcId = update.callbackQuery.data.removePrefix("mc_")
+            if (mcId.toLong() in userInfo.mcCompleted){
+                bot.execute(SendMessage(chatId, "Вы уже проходили этот мастеркласс. Выберите другй!"))
+                return
+            }
             val mc = mcRepository.findById(mcId.toLong()).get()
             if (!checkMC(userInfo.id)) {
                 bot.execute(SendMessage(chatId, "Вы уже записаны на мастеркласс!"))
@@ -57,7 +62,7 @@ class MCFetcher(
             }
             mc.users.add(userInfo.id)
             mcRepository.save(mc)
-            userInfo.mcCompleted.add(userInfo.id)
+            userInfo.mcCompleted.add(mcId.toLong())
             userInfoRepository.save(userInfo)
             bot.execute(SendMessage(chatId, "Вы успешно записаны на мастеркласс ${mc.name}!"))
         }
@@ -81,5 +86,14 @@ class MCFetcher(
             if (id in it.users) return false
         }
         return true
+    }
+
+    private fun resetUsers(){
+        mcRepository.findAll().forEach(){
+            mcRepository.save(
+                it.copy(users = mutableListOf())
+            )
+
+        }
     }
 }

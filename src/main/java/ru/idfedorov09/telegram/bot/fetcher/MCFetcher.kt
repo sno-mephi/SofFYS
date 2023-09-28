@@ -30,16 +30,15 @@ class MCFetcher(
         val message = updatesUtil.getText(update)?.lowercase()
         if (message == "/mc") {
             if ((chatId != "473458128") and (chatId != "920061911")) return
-            // TODO: НЕ РАБОТАЕТ!!! мб отдельный сервис создать хз, подумать как починить)))
-            resetMcUsers()
+            resetUsers()
             userInfoRepository.findAll().forEach { user ->
-                user.tui?.let {
+                user.tui?.let { tui ->
                     bot.execute(
                         SendMessage(
-                            it,
+                            tui,
                             "Выбери Мастеркласс, который ты хочешь сегодня посетить",
                         ).also {
-                            it.replyMarkup = createChooseKeyboard()
+                            it.replyMarkup = createChooseKeyboard(user)
                         },
                     )
                 }
@@ -92,9 +91,12 @@ class MCFetcher(
     }
     private fun createKeyboard(keyboard: List<List<InlineKeyboardButton>>) =
         InlineKeyboardMarkup().also { it.keyboard = keyboard }
-    private fun createChooseKeyboard(): InlineKeyboardMarkup {
+    private fun createChooseKeyboard(
+        userInfo: UserInfo,
+    ): InlineKeyboardMarkup {
         val keyboardList = mutableListOf<List<InlineKeyboardButton>>()
         mcRepository.findAll().forEach { mc ->
+            if (mc.id in userInfo.mcCompleted) return@forEach
             keyboardList.add(
                 listOf(
                     InlineKeyboardButton("${mc.name}").also { it.callbackData = "mc_${mc.id}" },
@@ -104,18 +106,18 @@ class MCFetcher(
         return createKeyboard(keyboardList)
     }
 
-    /**
-     * проверяет, зарегистрирован ли пользователь на МК
-     */
-    private fun checkMC(userId: Long): Boolean {
+    private fun checkMC(id: Long): Boolean {
         mcRepository.findAll().forEach {
-            if (userId in it.users) return false
+            if (id in it.users) return false
         }
         return true
     }
 
-    open fun resetMcUsers() {
-        val updatedMc = mcRepository.findAll().map { it.copy(users = mutableListOf()) }
-        mcRepository.saveAll(updatedMc)
+    private fun resetUsers() {
+        mcRepository.findAll().forEach() {
+            mcRepository.save(
+                it.copy(users = mutableListOf()),
+            )
+        }
     }
 }

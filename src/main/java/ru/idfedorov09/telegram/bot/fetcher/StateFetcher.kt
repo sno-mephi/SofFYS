@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
 import org.telegram.telegrambots.meta.api.objects.InputFile
-import ru.idfedorov09.telegram.bot.data.enums.BotStage
+import ru.idfedorov09.telegram.bot.data.enums.BotGameStage
 import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
 import ru.idfedorov09.telegram.bot.executor.TelegramPollingBot
@@ -36,7 +36,7 @@ class StateFetcher(
         }
 
         val tui = userResponse.initiator.tui ?: return
-        var answerMessage = "Статус игры: ${exp.botStage}"
+        var answerMessage = "Статус игры: ${exp.botGameStage}"
         val startGameTime = redisService.getSafe("start_game_time")
         startGameTime?.let {
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -56,7 +56,7 @@ class StateFetcher(
             return
         }
 
-        if (exp.botStage == BotStage.GAME) {
+        if (exp.botGameStage == BotGameStage.GAME) {
             log.error("bot state: GAME, but there is no start time (it is NULL)")
             return
         }

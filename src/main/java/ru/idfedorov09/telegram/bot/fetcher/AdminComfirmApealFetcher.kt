@@ -4,7 +4,7 @@ package ru.idfedorov09.telegram.bot.fetcher
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
-import ru.idfedorov09.telegram.bot.data.enums.BotStage
+import ru.idfedorov09.telegram.bot.data.enums.BotGameStage
 import ru.idfedorov09.telegram.bot.data.enums.UserResponseType
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
 import ru.idfedorov09.telegram.bot.data.repo.ProblemRepository
@@ -35,7 +35,7 @@ class AdminComfirmApealFetcher(
     ) {
         val tui = userResponse.initiator.tui ?: return
 
-        if (!(exp.botStage == BotStage.APPEAL || exp.botStage == BotStage.AFTER_APPEAL)) {
+        if (!(exp.botGameStage == BotGameStage.APPEAL || exp.botGameStage == BotGameStage.AFTER_APPEAL)) {
             return
         }
 

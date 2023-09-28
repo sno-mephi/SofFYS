@@ -27,4 +27,9 @@ data class UserInfo(
 
     @Column(name = "study_group", columnDefinition = "TEXT")
     val studyGroup: String? = null,
-)
+) {
+    /**
+     * проверяет, является ли юзер Иваном
+     */
+    fun isIvan() = tui == "920061911"
+}

@@ -37,6 +37,6 @@ class ActionFetcher(
             correctAnswerAttempt = userResponse.attemptAnswerNumber,
         )
 
-        actionRepository.save(action)
+        // actionRepository.save(action)
     }
 }

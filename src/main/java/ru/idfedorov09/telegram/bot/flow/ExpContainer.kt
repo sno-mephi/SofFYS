@@ -1,6 +1,7 @@
 package ru.idfedorov09.telegram.bot.flow
 
-import ru.idfedorov09.telegram.bot.data.enums.BotStage
+import ru.idfedorov09.telegram.bot.data.enums.BotGameStage
+import ru.idfedorov09.telegram.bot.data.enums.GlobalStage
 import ru.idfedorov09.telegram.bot.data.enums.RegistrationStage
 
 /**
@@ -8,7 +9,9 @@ import ru.idfedorov09.telegram.bot.data.enums.RegistrationStage
  */
 @Mutable
 data class ExpContainer(
-    var botStage: BotStage = BotStage.OFFLINE, // состояние бота
+    var globalStage: GlobalStage = GlobalStage.REGISTRATION,
+    var hasChatId: Boolean = false,
+    var botGameStage: BotGameStage = BotGameStage.OFFLINE, // состояние игры
     var registrationStage: RegistrationStage = RegistrationStage.NO_REGISTRATION,
     var EXP_COMMANDS: Boolean = true, // включение экспериментальных команд
     var IS_VALID_COMMAND: Boolean = false, // валидная ли команда пришла

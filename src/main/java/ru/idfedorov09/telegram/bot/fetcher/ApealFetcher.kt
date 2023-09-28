@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
-import ru.idfedorov09.telegram.bot.data.enums.BotStage
+import ru.idfedorov09.telegram.bot.data.enums.BotGameStage
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
 import ru.idfedorov09.telegram.bot.data.repo.ProblemRepository
 import ru.idfedorov09.telegram.bot.data.repo.TeamRepository
@@ -14,7 +14,6 @@ import ru.idfedorov09.telegram.bot.data.repo.UserInfoRepository
 import ru.idfedorov09.telegram.bot.executor.TelegramPollingBot
 import ru.idfedorov09.telegram.bot.flow.ExpContainer
 import ru.idfedorov09.telegram.bot.flow.InjectData
-import ru.idfedorov09.telegram.bot.service.RedisService
 
 @Component
 class ApealFetcher(
@@ -35,7 +34,7 @@ class ApealFetcher(
     ) {
         val tui = userResponse.initiator.tui ?: return
 
-        if (!(exp.botStage == BotStage.APPEAL && userResponse.initiator.isCaptain)) {
+        if (!(exp.botGameStage == BotGameStage.APPEAL && userResponse.initiator.isCaptain)) {
             return
         }
 

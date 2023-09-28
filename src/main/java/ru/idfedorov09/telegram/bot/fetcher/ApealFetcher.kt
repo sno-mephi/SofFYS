@@ -55,9 +55,9 @@ class ApealFetcher(
             SendMessage(
                 "920061911",
                 "Команда ${team.teamName}. Задача:$problemCategory $problemCost." +
-                        "\n Первый ответ команды: " +
-                        "\n второй ответ команды: " +
-                        "\n верый ответ $realAnswer", // TODO добавить ответы команды
+                    "\n Первый ответ команды: " +
+                    "\n второй ответ команды: " +
+                    "\n верый ответ $realAnswer", // TODO добавить ответы команды
             ).also {
                 it.replyMarkup = createChooseKeyboard(userResponse)
             },

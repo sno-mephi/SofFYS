@@ -18,4 +18,5 @@ data class ExpContainer(
     var IS_VALID_COMMAND: Boolean = false, // валидная ли команда пришла
     var IS_STAGE_CHANGED: Boolean = false, // было ли изменено состояние бота
     var CAP_REGISTRATION_CLOSED_NOW: Boolean = false, // регистрация всех пользователей (В данный момент она закрытаБ открывается один раз за игру!!!
-)
+    var END_GAME_NOW: Boolean = false, // закончилась ли стадия игры
+    )

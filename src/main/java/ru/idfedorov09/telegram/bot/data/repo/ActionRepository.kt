@@ -21,7 +21,7 @@ interface ActionRepository : JpaRepository<Action, Long> {
 
     @Query(
         "SELECT a.answer FROM Action a " +
-            "WHERE a.teamId = :teamId AND a.problemId = :problemId AND a.action = 'SEND_ANSWER'",
+            "WHERE a.teamId = :teamId AND a.problemId = :problemId AND a.action = 'SEND_ANSWER' ORDER BY a.time",
     )
     fun findAnswersByTeamIdAndProblemId(
         @Param("teamId") teamId: Long,

@@ -78,7 +78,7 @@ class GlobalRegistrationFetcher(
     }
 
     private fun isCorrectStudyGroup(input: String): Boolean {
-        val regex = Regex("[бс]\\d{2}-\\d{3}")
+        val regex = Regex("[абмс]\\d{2}-\\d{3}")
         return regex.matches(input)
     }
 }

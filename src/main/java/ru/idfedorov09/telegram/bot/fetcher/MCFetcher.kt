@@ -36,7 +36,7 @@ class MCFetcher(
                     bot.execute(
                         SendMessage(
                             it,
-                            "Выберите мастеркласс",
+                            "Выберите Мастеркласс, которыф вы хотите сегодня посетить.",
                         ).also {
                             it.replyMarkup = createChooseKeyboard()
                         },
@@ -75,18 +75,18 @@ class MCFetcher(
             }
             val mc = mcRepository.findById(mcId.toLong()).get()
             if (!checkMC(userInfo.id)) {
-                bot.execute(SendMessage(chatId, "Вы уже записаны на мастеркласс!"))
+                bot.execute(SendMessage(chatId, "У вас слишком большие запросы! ⛔ Вы уже записаны на мастеркласс!"))
                 return
             }
             if (mc.users.size >= mc.maxUsersCount!!) {
-                bot.execute(SendMessage(chatId, "На этом мастерклассе закончились места. Выберите другой!"))
+                bot.execute(SendMessage(chatId, "На этом мастерклассе закончились места. Вы сможете посетить его в другой день"))
                 return
             }
             mc.users.add(userInfo.id)
             mcRepository.save(mc)
             userInfo.mcCompleted.add(mcId.toLong())
             userInfoRepository.save(userInfo)
-            bot.execute(SendMessage(chatId, "Вы успешно записаны на мастеркласс ${mc.name}!"))
+            bot.execute(SendMessage(chatId, "Вы успешно записаны на мастеркласс ${mc.name}! ✅"))
         }
     }
     private fun createKeyboard(keyboard: List<List<InlineKeyboardButton>>) =

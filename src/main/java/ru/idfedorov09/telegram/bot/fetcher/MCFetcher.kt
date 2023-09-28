@@ -49,7 +49,7 @@ class MCFetcher(
                 bot.execute(SendMessage(chatId, "Вы уже записаны на мастеркласс!"))
                 return
             }
-            if (mc.users.size >= mc.limit!!) {
+            if (mc.users.size >= mc.maxUsersCount!!) {
                 bot.execute(SendMessage(chatId, "На этом мастерклассе закончились места. Выберите другой!"))
                 return
             }

@@ -13,8 +13,8 @@ data class MC(
     @Column(name = "name", columnDefinition = "TEXT")
     val name: String? = null,
 
-    @Column(name = "limit")
-    val limit: Long? = null,
+    @Column(name = "max_users_count")
+    val maxUsersCount: Long? = null,
 
     @ElementCollection
     @Column(name = "users", columnDefinition = "BIGINT")

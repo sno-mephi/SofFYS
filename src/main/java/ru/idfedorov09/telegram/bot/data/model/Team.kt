@@ -13,11 +13,11 @@ data class Team(
     @Column(name = "team_name", columnDefinition = "TEXT")
     val teamName: String? = null,
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "problems_pool", columnDefinition = "BIGINT")
     val problemsPool: MutableList<Long> = mutableListOf(),
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "completed_problems", columnDefinition = "BIGINT")
     val completedProblems: MutableList<Long> = mutableListOf(),
 
@@ -30,7 +30,7 @@ data class Team(
     @Column(name = "last_board_hash", columnDefinition = "TEXT")
     val lastBoardHash: String? = null,
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "appealed_problems", columnDefinition = "BIGINT")
     val appealedProblems: MutableList<Long> = mutableListOf(),
 )

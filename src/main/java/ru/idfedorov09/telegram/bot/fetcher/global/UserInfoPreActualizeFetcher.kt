@@ -1,5 +1,6 @@
 package ru.idfedorov09.telegram.bot.fetcher.global
 
+import org.hibernate.Hibernate
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import ru.idfedorov09.telegram.bot.data.model.UserInfo

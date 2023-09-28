@@ -19,7 +19,7 @@ data class Problem(
     @Column(name = "cost")
     val cost: Long? = null,
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "answers", columnDefinition = "TEXT")
     val answers: MutableList<String> = mutableListOf(),
 

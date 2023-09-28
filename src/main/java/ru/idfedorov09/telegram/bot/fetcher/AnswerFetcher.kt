@@ -26,6 +26,7 @@ class AnswerFetcher(
     companion object {
         private const val POLYAKOV_TRASH_ID = "473458128"
     }
+
     @InjectData
     fun doFetch(
         userResponse: UserResponse,
@@ -39,7 +40,6 @@ class AnswerFetcher(
         val attemptNumber = userResponse.attemptAnswerNumber ?: return IsAnswer()
         val answer = userResponse.answer?.lowercase() ?: return IsAnswer()
         val teamId = team.id
-
 
         if (!user.isCaptain) return IsAnswer()
         if (problemId in team.completedProblems) {

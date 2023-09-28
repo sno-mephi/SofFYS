@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
+import ru.idfedorov09.telegram.bot.data.model.UserInfo
 import ru.idfedorov09.telegram.bot.data.repo.MCRepository
 import ru.idfedorov09.telegram.bot.data.repo.UserInfoRepository
 import ru.idfedorov09.telegram.bot.executor.TelegramPollingBot
@@ -23,10 +24,10 @@ class MCFetcher(
         updatesUtil: UpdatesUtil,
         exp: ExpContainer,
         bot: TelegramPollingBot,
+        userInfo: UserInfo,
     ) {
         val chatId = updatesUtil.getChatId(update) ?: return
         val message = updatesUtil.getText(update)?.lowercase()
-        val userInfo = userInfoRepository.findByTui(chatId) ?: return
         if (message == "/mc") {
             if ((chatId != "473458128") and (chatId != "920061911")) return
             userInfoRepository.findAll().forEach { user ->

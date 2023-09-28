@@ -16,7 +16,7 @@ data class MC(
     @Column(name = "max_users_count")
     val maxUsersCount: Long? = null,
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "users", columnDefinition = "BIGINT")
     val users: MutableList<Long> = mutableListOf(),
 )

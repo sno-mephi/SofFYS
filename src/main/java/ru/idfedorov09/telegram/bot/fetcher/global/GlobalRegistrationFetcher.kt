@@ -24,7 +24,7 @@ class GlobalRegistrationFetcher(
         bot: TelegramPollingBot,
         exp: ExpContainer,
     ) {
-        val message = updatesUtil.getText(update)?.lowercase() ?: return
+        val message = updatesUtil.getText(update)?.lowercase()
         val chatId = updatesUtil.getChatId(update) ?: return
 
         exp.isRegistered = false
@@ -37,10 +37,11 @@ class GlobalRegistrationFetcher(
 
     private fun groupNumEnterStage(
         userInfo: UserInfo,
-        groupNumber: String,
+        groupNumber: String?,
         chatId: String,
         bot: TelegramPollingBot,
     ) {
+        groupNumber ?: return
         if (!isCorrectStudyGroup(groupNumber)) {
             bot.execute(
                 SendMessage(
@@ -62,16 +63,17 @@ class GlobalRegistrationFetcher(
 
     private fun fullNameEnterStage(
         userInfo: UserInfo,
-        fullName: String,
+        fullName: String?,
         chatId: String,
         bot: TelegramPollingBot,
     ) {
+        fullName ?: return
         userInfoRepository.save(userInfo.copy(fullName = fullName))
         bot.execute(
             SendMessage(
                 chatId,
-                "Спасибо за регистрацию!"
-            )
+                "Спасибо за регистрацию!",
+            ),
         )
     }
 

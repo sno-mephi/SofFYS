@@ -114,7 +114,7 @@ class MCFetcher(
     }
 
     private fun resetUsers() {
-        mcRepository.findAll().forEach() {
+        mcRepository.findAll().forEach {
             mcRepository.save(
                 it.copy(users = mutableListOf()),
             )

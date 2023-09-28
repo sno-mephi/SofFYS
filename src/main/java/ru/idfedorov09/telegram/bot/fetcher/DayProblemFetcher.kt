@@ -1,6 +1,7 @@
 package ru.idfedorov09.telegram.bot.fetcher
 
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -41,6 +42,9 @@ class DayProblemFetcher(
                 msg.fromChatId = chatId
                 msg.chatId = "920061911"
                 msg.messageId = update.message.messageId
+                bot.execute(SendMessage("920061911",
+                    "Ответ от ${userInfoRepository.findByTui(chatId)?.fullName}"))
+                bot.execute(msg)
             }
         }
     }

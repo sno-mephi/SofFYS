@@ -23,11 +23,9 @@ class ActionFetcher(
     @InjectData
     fun doFetch(
         userResponse: UserResponse,
-        bot: TelegramPollingBot,
-        exp: ExpContainer,
-        update: Update,
         isAnswer: IsAnswer,
     ) {
+        // TODO: сохранять только нуные нам action
         val action = Action(
             teamId = userResponse.initiatorTeam?.id,
             time = userResponse.receiveTime,
@@ -37,6 +35,6 @@ class ActionFetcher(
             correctAnswerAttempt = userResponse.attemptAnswerNumber,
         )
 
-        // actionRepository.save(action)
+        actionRepository.save(action)
     }
 }

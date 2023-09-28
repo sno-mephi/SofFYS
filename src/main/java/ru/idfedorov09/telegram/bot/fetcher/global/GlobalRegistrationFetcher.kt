@@ -7,6 +7,7 @@ import ru.idfedorov09.telegram.bot.data.model.UserInfo
 import ru.idfedorov09.telegram.bot.data.repo.UserInfoRepository
 import ru.idfedorov09.telegram.bot.executor.TelegramPollingBot
 import ru.idfedorov09.telegram.bot.fetcher.GeneralFetcher
+import ru.idfedorov09.telegram.bot.flow.ExpContainer
 import ru.idfedorov09.telegram.bot.flow.InjectData
 import ru.idfedorov09.telegram.bot.util.UpdatesUtil
 
@@ -21,14 +22,16 @@ class GlobalRegistrationFetcher(
         updatesUtil: UpdatesUtil,
         userInfo: UserInfo,
         bot: TelegramPollingBot,
+        exp: ExpContainer,
     ) {
         val message = updatesUtil.getText(update)?.lowercase() ?: return
         val chatId = updatesUtil.getChatId(update) ?: return
 
+        exp.isRegistered = false
         when {
             userInfo.studyGroup == null -> groupNumEnterStage(userInfo, message, chatId, bot)
             userInfo.fullName == null -> fullNameEnterStage(userInfo, message, chatId, bot)
-            else -> return // уже базово зареган
+            else -> exp.isRegistered = true // уже базово зареган
         }
     }
 

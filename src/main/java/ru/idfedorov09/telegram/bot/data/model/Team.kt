@@ -14,11 +14,11 @@ data class Team(
     val teamName: String? = null,
 
     @ElementCollection
-    @Column(name = "problems_pool", columnDefinition = "BIGINT[]")
+    @Column(name = "problems_pool", columnDefinition = "BIGINT")
     val problemsPool: MutableList<Long> = mutableListOf(),
 
     @ElementCollection
-    @Column(name = "completed_problems", columnDefinition = "BIGINT[]")
+    @Column(name = "completed_problems", columnDefinition = "BIGINT")
     val completedProblems: MutableList<Long> = mutableListOf(),
 
     @Column(name = "points")
@@ -31,6 +31,6 @@ data class Team(
     val lastBoardHash: String? = null,
 
     @ElementCollection
-    @Column(name = "appealed_problems", columnDefinition = "BIGINT[]")
+    @Column(name = "appealed_problems", columnDefinition = "BIGINT")
     val appealedProblems: MutableList<Long> = mutableListOf(),
 )

@@ -20,7 +20,7 @@ data class Problem(
     val cost: Long? = null,
 
     @ElementCollection
-    @Column(name = "answers")
+    @Column(name = "answers", columnDefinition = "TEXT")
     val answers: MutableList<String> = mutableListOf(),
 
     /**

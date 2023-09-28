@@ -22,6 +22,7 @@ open class FlowConfiguration(
     private val poolFetcher: PoolFetcher,
     private val apealFetcher: ApealFetcher,
     private val adminComfirmApealFetcher: AdminComfirmApealFetcher,
+    private val actionFetcher: ActionFetcher,
 ) {
 
     /**
@@ -68,8 +69,9 @@ open class FlowConfiguration(
                         fetch(topFetcher)
                         fetch(adminComfirmApealFetcher)
                     }
+                    fetch(stateFetcher)
                 }
-                fetch(stateFetcher)
+              whenComplete { fetch(actionFetcher) } 
             }
         }
     }

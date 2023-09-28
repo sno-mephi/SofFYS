@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
 import ru.idfedorov09.telegram.bot.data.enums.BotGameStage
 import ru.idfedorov09.telegram.bot.data.enums.UserResponseType
+import ru.idfedorov09.telegram.bot.data.model.CountActionsByTeamIdAndProblemIdAndAction
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
 import ru.idfedorov09.telegram.bot.data.repo.ProblemRepository
 import ru.idfedorov09.telegram.bot.data.repo.TeamRepository
@@ -32,15 +33,15 @@ class AdminComfirmApealFetcher(
         bot: TelegramPollingBot,
         exp: ExpContainer,
         update: Update,
-    ) {
-        val tui = userResponse.initiator.tui ?: return
+    ): CountActionsByTeamIdAndProblemIdAndAction {
+        val tui = userResponse.initiator.tui ?: return CountActionsByTeamIdAndProblemIdAndAction()
 
         if (!(exp.botGameStage == BotGameStage.APPEAL || exp.botGameStage == BotGameStage.AFTER_APPEAL)) {
-            return
+            return CountActionsByTeamIdAndProblemIdAndAction()
         }
 
         if (!(tui == "920061911" && userResponse.userResponseType == UserResponseType.BUTTON_RESPONSE)) {
-            return
+            return CountActionsByTeamIdAndProblemIdAndAction()
         }
 
         val answer = update.callbackQuery.data.split(" ")
@@ -48,14 +49,16 @@ class AdminComfirmApealFetcher(
 
        when (answer[0]) {
            "First_true" -> {
-               val problemCost = problemRepository.findById(answer[2].toLong()).get().cost ?: return
+               val problemCost = problemRepository.findById(answer[2].toLong()).get().cost ?: return CountActionsByTeamIdAndProblemIdAndAction()
                teamRepository.save(team.copy(points = team.points + problemCost))
+               return CountActionsByTeamIdAndProblemIdAndAction(1)
            }
            "Second_true" -> {
-               val problemCost = problemRepository.findById(answer[2].toLong()).get().cost ?: return
+               val problemCost = problemRepository.findById(answer[2].toLong()).get().cost ?: return CountActionsByTeamIdAndProblemIdAndAction()
                teamRepository.save(team.copy(points = team.points + problemCost / 2))
+               return CountActionsByTeamIdAndProblemIdAndAction(2)
            }
-           else -> return
+           else -> return CountActionsByTeamIdAndProblemIdAndAction(0)
        }
     }
 }

@@ -43,6 +43,7 @@ class DayProblemFetcher(
         if (message == "/dp" && hashPhoto != null) {
             if ((chatId != "473458128") and (chatId != "920061911")) return
             userInfoRepository.findAll().forEach { currentUser ->
+                Thread.sleep(100L)
                 currentUser.tui ?: return@forEach
                 bot.execute(
                     SendPhoto().also {

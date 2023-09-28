@@ -88,7 +88,7 @@ class MCFetcher(
                 bot.execute(SendMessage(chatId, "На этом мастерклассе закончились места. Ты сможешь посетить его в другой день"))
                 return
             }
-            userInfo.id?.let { mc.users.add(it) }
+            userInfo.id.let { mc.users.add(it) }
             mcRepository.save(mc)
             userInfo.mcCompleted.add(mcId.toLong())
             userInfoRepository.save(userInfo)
@@ -115,9 +115,9 @@ class MCFetcher(
     /**
      * проверяет, зарегистрирован ли пользователь на МК
      */
-    private fun checkMC(id: Long): Boolean {
+    private fun checkMC(userId: Long): Boolean {
         mcRepository.findAll().forEach {
-            if (id in it.users) return false
+            if (userId in it.users) return false
         }
         return true
     }

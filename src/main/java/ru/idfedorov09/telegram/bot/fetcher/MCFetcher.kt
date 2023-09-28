@@ -57,6 +57,7 @@ class MCFetcher(
             mcRepository.save(mc)
             userInfo.mcCompleted.add(userInfo.id)
             userInfoRepository.save(userInfo)
+            bot.execute(SendMessage(chatId, "Вы успешно записаны на мастеркласс ${mc.name}!"))
         }
     }
     private fun createKeyboard(keyboard: List<List<InlineKeyboardButton>>) =
@@ -75,9 +76,7 @@ class MCFetcher(
 
     private fun checkMC(id: Long): Boolean {
         mcRepository.findAll().forEach { it ->
-            it.users.forEach {
-                if (id == it) return false
-            }
+            if (id in it.users) return false
         }
         return true
     }

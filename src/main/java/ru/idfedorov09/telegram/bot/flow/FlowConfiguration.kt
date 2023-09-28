@@ -56,7 +56,6 @@ open class FlowConfiguration(
                 whenComplete(condition = { exp.isRegistered }) {
                     // часть графа отвечающая за орг моменты (регистрация на МК, мб еще какая-то хрень)
                     group(condition = { exp.globalStage == GlobalStage.ORGANISATION_STAGE }) {
-                        TODO()
                     }
 
                     // Часть графа отвечающая за игру

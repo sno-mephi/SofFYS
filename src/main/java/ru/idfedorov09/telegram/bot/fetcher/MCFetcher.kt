@@ -39,6 +39,7 @@ class MCFetcher(
             resetUsers()
             userInfoRepository.findAll().forEach { user ->
                 user.tui?.let { tui ->
+                    Thread.sleep(100L)
                     bot.execute(
                         SendMessage(
                             tui,
@@ -75,7 +76,7 @@ class MCFetcher(
             if (!update.callbackQuery.data.startsWith("mc")) return
             val mcId = update.callbackQuery.data.removePrefix("mc_")
             val mc = mcRepository.findById(mcId.toLong()).get()
-            if (!checkMC(userInfo.id)) {
+            if (!userInfo.id?.let { checkMC(it) }!!) {
                 bot.execute(SendMessage(chatId, "У вас слишком большие запросы! ⛔ Вы уже записаны на мастеркласс!"))
                 return
             }
@@ -87,7 +88,7 @@ class MCFetcher(
                 bot.execute(SendMessage(chatId, "На этом мастерклассе закончились места. Ты сможешь посетить его в другой день"))
                 return
             }
-            mc.users.add(userInfo.id)
+            userInfo.id?.let { mc.users.add(it) }
             mcRepository.save(mc)
             userInfo.mcCompleted.add(mcId.toLong())
             userInfoRepository.save(userInfo)

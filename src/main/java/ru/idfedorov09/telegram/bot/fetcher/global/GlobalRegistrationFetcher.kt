@@ -69,6 +69,7 @@ class GlobalRegistrationFetcher(
     ) {
         fullName ?: return
         userInfoRepository.save(userInfo.copy(fullName = fullName))
+
         bot.execute(
             SendMessage(
                 chatId,

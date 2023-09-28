@@ -3,14 +3,11 @@ package ru.idfedorov09.telegram.bot.fetcher
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.objects.Update
 import ru.idfedorov09.telegram.bot.data.model.Action
 import ru.idfedorov09.telegram.bot.data.model.IsAnswer
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
 import ru.idfedorov09.telegram.bot.data.model.CountActionsByTeamIdAndProblemIdAndAction
 import ru.idfedorov09.telegram.bot.data.repo.ActionRepository
-import ru.idfedorov09.telegram.bot.executor.TelegramPollingBot
-import ru.idfedorov09.telegram.bot.flow.ExpContainer
 import ru.idfedorov09.telegram.bot.flow.InjectData
 
 @Component

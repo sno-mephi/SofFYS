@@ -44,7 +44,7 @@ class ApealFetcher(
         val problemId = userResponse.problemId ?: return
         val team = userResponse.initiatorTeam ?: return
 
-        if (!actionRepository.presenceOfIncorrectAnswers(team.id, problemId) || problemId in team.appealedProblems) {
+        if (!team.id?.let { actionRepository.presenceOfIncorrectAnswers(it, problemId) }!! || problemId in team.appealedProblems) {
             return
         }
 

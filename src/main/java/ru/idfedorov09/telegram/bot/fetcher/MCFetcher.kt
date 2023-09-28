@@ -36,7 +36,7 @@ class MCFetcher(
                     bot.execute(
                         SendMessage(
                             it,
-                            "Выбери Мастеркласс, который ты хочешь сегодня посетить.",
+                            "Выбери Мастеркласс, который ты хочешь сегодня посетить",
                         ).also {
                             it.replyMarkup = createChooseKeyboard()
                         },

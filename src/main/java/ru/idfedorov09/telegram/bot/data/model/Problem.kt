@@ -11,7 +11,7 @@ data class Problem(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    val id: Long = -1,
+    val id: Long? = null,
 
     @Column(name = "category", columnDefinition = "TEXT")
     val category: String? = null,

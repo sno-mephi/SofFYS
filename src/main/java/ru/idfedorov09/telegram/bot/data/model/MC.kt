@@ -8,7 +8,7 @@ data class MC(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    val id: Long = -1,
+    val id: Long? = null,
 
     @Column(name = "name", columnDefinition = "TEXT")
     val name: String? = null,

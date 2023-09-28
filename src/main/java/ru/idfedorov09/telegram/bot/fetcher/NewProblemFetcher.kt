@@ -64,6 +64,7 @@ class NewProblemFetcher(
             .filter { it.teamId == teamId }
             .forEach { userInTeam ->
                 userInTeam.tui?.let {
+                    Thread.sleep(100L)
                     val photo = SendPhoto()
                     photo.chatId = it
                     photo.photo = InputFile(problemPhotoHash)

@@ -8,7 +8,7 @@ data class Team(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    val id: Long = -1,
+    val id: Long? = null,
 
     @Column(name = "team_name", columnDefinition = "TEXT")
     val teamName: String? = null,

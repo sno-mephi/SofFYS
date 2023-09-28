@@ -84,7 +84,7 @@ class AnswerFetcher(
         team.problemsPool.remove(problemId)
         team.completedProblems.add(problemId)
         teamRepository.save(team)
-        toCompleted(team.id, problemId)
+        team.id?.let { toCompleted(it, problemId) }
     }
 
     private fun toCompleted(teamId: Long, problemId: Long) {

@@ -10,7 +10,7 @@ data class Action(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    val id: Long = -1,
+    val id: Long? = null,
 
     @Column(name = "team_id")
     val teamId: Long? = null,

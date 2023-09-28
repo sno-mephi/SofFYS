@@ -48,7 +48,7 @@ class StageResolveFetcher(
         // получаем глобальное состояние бота
         exp.globalStage = redisService.getSafe(PropertyNames.GLOBAL_STAGE_PROPERTY)
             ?.let { GlobalStage.valueOf(it) }
-            ?: GlobalStage.REGISTRATION
+            ?: GlobalStage.ORGANISATION_STAGE
 
         log.info("exp after stageResolveFetcher: {}", exp)
     }

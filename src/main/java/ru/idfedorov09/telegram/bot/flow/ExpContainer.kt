@@ -9,7 +9,8 @@ import ru.idfedorov09.telegram.bot.data.enums.RegistrationStage
  */
 @Mutable
 data class ExpContainer(
-    var globalStage: GlobalStage = GlobalStage.REGISTRATION,
+    var globalStage: GlobalStage = GlobalStage.ORGANISATION_STAGE,
+    var isRegistered: Boolean = false,
     var hasChatId: Boolean = false,
     var botGameStage: BotGameStage = BotGameStage.OFFLINE, // состояние игры
     var registrationStage: RegistrationStage = RegistrationStage.NO_REGISTRATION,

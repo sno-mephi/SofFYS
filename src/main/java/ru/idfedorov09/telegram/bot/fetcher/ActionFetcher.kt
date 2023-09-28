@@ -37,6 +37,6 @@ class ActionFetcher(
             correctAnswerAttempt = countActionsByTeamIdAndProblemIdAndAction.countActionsByTeamIdAndProblemIdAndAction,
         )
 
-        // actionRepository.save(action)
+        actionRepository.save(action)
     }
 }

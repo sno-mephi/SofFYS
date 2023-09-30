@@ -28,6 +28,10 @@ class RedisService @Autowired constructor(private val jedis: Jedis) {
     }
 
     fun setValue(key: String, value: String?) {
+        value ?: run {
+            jedis.del(key)
+            return
+        }
         jedis[key] = value
     }
 

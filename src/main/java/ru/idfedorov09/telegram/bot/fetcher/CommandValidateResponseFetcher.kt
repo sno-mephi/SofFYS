@@ -90,6 +90,20 @@ class CommandValidateResponseFetcher(
             else -> null
         }
 
+        if (update.hasCallbackQuery() && userResponse == null) {
+            exp.IS_VALID_COMMAND = true
+            return UserResponse(
+                initiator = initiator,
+                initiatorTeam = initiatorTeam,
+                userResponseType = extractAnswerType(update),
+                action = ResponseAction.UNKNOWN_ACTION,
+                receiveTime = currentTime,
+                problemId = null,
+                answer = null,
+                messageText = null,
+            )
+        }
+
         if (
             exp.botGameStage == BotGameStage.REGISTRATION &&
             exp.registrationStage == RegistrationStage.CAP_REGISTRATION &&

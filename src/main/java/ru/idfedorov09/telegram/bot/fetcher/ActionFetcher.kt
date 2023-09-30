@@ -3,10 +3,11 @@ package ru.idfedorov09.telegram.bot.fetcher
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
 import ru.idfedorov09.telegram.bot.data.model.Action
+import ru.idfedorov09.telegram.bot.data.model.CountActionsByTeamIdAndProblemIdAndAction
 import ru.idfedorov09.telegram.bot.data.model.IsAnswer
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
-import ru.idfedorov09.telegram.bot.data.model.CountActionsByTeamIdAndProblemIdAndAction
 import ru.idfedorov09.telegram.bot.data.repo.ActionRepository
 import ru.idfedorov09.telegram.bot.flow.InjectData
 
@@ -25,7 +26,8 @@ class ActionFetcher(
         countActionsByTeamIdAndProblemIdAndAction: CountActionsByTeamIdAndProblemIdAndAction?,
     ) {
         isAnswer ?: return
-        val countAnswers = countActionsByTeamIdAndProblemIdAndAction?.countActionsByTeamIdAndProblemIdAndAction ?: 1L
+        var countAnswers = countActionsByTeamIdAndProblemIdAndAction?.countActionsByTeamIdAndProblemIdAndAction ?: 1L
+
         // TODO: сохранять только нуные нам action
         val action = Action(
             teamId = userResponse.initiatorTeam?.id,
@@ -33,7 +35,7 @@ class ActionFetcher(
             action = userResponse.action,
             problemId = userResponse.problemId,
             isCorrectAnswer = isAnswer.isAnswer,
-            correctAnswerAttempt = countAnswers,
+            correctAnswerAttempt = if (userResponse.action != ResponseAction.SEND_ANSWER) null else countAnswers,
         )
 
         actionRepository.save(action)

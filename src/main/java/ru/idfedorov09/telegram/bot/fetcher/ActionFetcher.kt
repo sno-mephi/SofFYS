@@ -35,7 +35,7 @@ class ActionFetcher(
             action = userResponse.action,
             problemId = userResponse.problemId,
             isCorrectAnswer = isAnswer.isAnswer,
-            correctAnswerAttempt = if (userResponse.action != ResponseAction.SEND_ANSWER) null else countAnswers,
+            correctAnswerAttempt = null,
         )
 
         actionRepository.save(action)

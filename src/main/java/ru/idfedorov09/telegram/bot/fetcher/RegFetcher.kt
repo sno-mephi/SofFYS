@@ -60,7 +60,7 @@ class RegFetcher(
                 if (userResponse.userResponseType != UserResponseType.BUTTON_RESPONSE) {
                     return
                 }
-                messageFromNoCap(tui, update)
+                messageFromNoCap(tui, update, bot)
             }
 
             else -> return
@@ -169,6 +169,7 @@ class RegFetcher(
     private fun messageFromNoCap(
         tui: String,
         update: Update,
+        bot: TelegramPollingBot,
     ) {
         val answer = update.callbackQuery.data
         val thisUser = userInfoRepository.findByTui(tui) ?: return
@@ -177,5 +178,6 @@ class RegFetcher(
                 teamId = answer.toLongOrNull(),
             ),
         )
+        bot.execute(SendMessage(tui, "Ты успешно вступил в команду!"))
     }
 }

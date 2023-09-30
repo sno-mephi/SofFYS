@@ -17,6 +17,7 @@ import ru.idfedorov09.telegram.bot.flow.InjectData
 import ru.idfedorov09.telegram.bot.service.UserInfoService
 import ru.idfedorov09.telegram.bot.util.UpdatesUtil
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 /**
  * Фетчер обрабатывающий сообщения-команды и заносящий информацию о них в контекст,
@@ -40,7 +41,7 @@ class CommandValidateResponseFetcher(
         updatesUtil: UpdatesUtil,
         exp: ExpContainer,
     ): UserResponse? {
-        val currentTime = LocalDateTime.now()
+        val currentTime = LocalDateTime.now(ZoneId.of("Europe/Moscow"))
         val message = updatesUtil.getText(update)
         val command = message?.split(" ")?.get(0)
         val chatId = updatesUtil.getChatId(update) ?: return null

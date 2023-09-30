@@ -11,6 +11,7 @@ import ru.idfedorov09.telegram.bot.flow.ExpContainer
 import ru.idfedorov09.telegram.bot.flow.InjectData
 import ru.idfedorov09.telegram.bot.service.RedisService
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Component
@@ -28,7 +29,7 @@ class StartGamePhaseFetcher(
         val startHashId = redisService.getSafe(PropertyNames.START_BOARD_HASH)
 
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        redisService.setValue(PropertyNames.START_GAME_TIME, LocalDateTime.now().format(formatter))
+        redisService.setValue(PropertyNames.START_GAME_TIME, LocalDateTime.now(ZoneId.of("Europe/Moscow")).format(formatter))
 
         userInfoRepository.findAll().forEach { user ->
             user.tui ?: return@forEach

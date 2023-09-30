@@ -33,7 +33,7 @@ public class RedisConfig extends CachingConfigurerSupport {
 
     @Bean
     public Jedis jedis(){
-        return (Jedis) redisConnectionFactory().getConnection().getNativeConnection();
+        return new Jedis(redisHost, redisPort);
     }
 
 

@@ -163,7 +163,7 @@ class RegFetcher(
                 bot.execute(
                     SendMessage(
                         tui,
-                        "ты даун?)",
+                        "ты уже создал команду!",
                     ),
                 )
             } else {

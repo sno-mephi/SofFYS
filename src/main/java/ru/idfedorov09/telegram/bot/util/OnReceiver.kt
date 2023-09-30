@@ -11,6 +11,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.api.objects.Update
 import redis.clients.jedis.Jedis
 import ru.idfedorov09.telegram.bot.config.BotContainer
+import ru.idfedorov09.telegram.bot.service.RedisService
 import ru.idfedorov09.telegram.bot.service.UserQueue
 import java.util.concurrent.Executors
 
@@ -25,7 +26,7 @@ class OnReceiver {
     private lateinit var botContainer: BotContainer
 
     @Autowired
-    private lateinit var jedis: Jedis
+    private lateinit var redisService: RedisService
 
     @Autowired
     private lateinit var updatesUtil: UpdatesUtil
@@ -50,10 +51,10 @@ class OnReceiver {
 
         val chatKey = updatesUtil.getChatKey(chatId)
 
-        if (jedis.get(chatKey) == null) {
-            jedis.set(chatKey, "1")
+        if (redisService.getSafe(chatKey) == null) {
+            redisService.setValue(chatKey, "1")
             execOne(update, executor)
-            jedis.del(chatKey)
+            redisService.del(chatKey)
 
             val upd: Update? = userQueue.popUpdate(chatId)
             upd?.let { onReceive(upd, executor) }

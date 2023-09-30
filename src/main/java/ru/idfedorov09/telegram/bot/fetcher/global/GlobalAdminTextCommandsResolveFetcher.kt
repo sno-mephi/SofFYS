@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
-import ru.idfedorov09.telegram.bot.data.GlobalSets
 import ru.idfedorov09.telegram.bot.data.PropertyNames
 import ru.idfedorov09.telegram.bot.data.enums.BotGameStage
 import ru.idfedorov09.telegram.bot.data.enums.GlobalStage
@@ -84,6 +83,8 @@ class GlobalAdminTextCommandsResolveFetcher(
             "/clear_all_game" -> clearAllGameData(params)
             "/close_cap_reg" -> closeCapRegistration(params)
             "/close_reg" -> closeRegistration(params)
+            "/close_appeal" -> closeAppealStage(params)
+            "/results" -> sendResults(params)
         }
 
         redisService.setValue(PropertyNames.STAGE_PROPERTY, exp.botGameStage.name)
@@ -183,5 +184,22 @@ class GlobalAdminTextCommandsResolveFetcher(
                 "Ок, закрыл регистрацию",
             ),
         )
+    }
+
+    private fun closeAppealStage(params: Params) {
+        params.exp.botGameStage = BotGameStage.AFTER_APPEAL
+        params.execute(
+            SendMessage(
+                params.chatId,
+                "Ок, закрыл апелляцию",
+            ),
+        )
+    }
+
+    /*
+    тут челам надо разослать на каком они месте и типа того что выводит /top
+     */
+    private fun sendResults(params: Params) {
+        params.exp.botGameStage = BotGameStage.AFTER_APPEAL
     }
 }

@@ -10,7 +10,7 @@ import redis.clients.jedis.Jedis;
 public class UserQueue {
 
     @Autowired
-    private Jedis jedis;
+    private RedisService redisService;
 
     @Autowired
     private Gson gson;
@@ -21,7 +21,7 @@ public class UserQueue {
         return QUEUE_PREFIX+chatId;
     }
     public String popString(String chatId){
-        return jedis.lpop(getQueueKey(chatId));
+        return redisService.lpop(getQueueKey(chatId));
     }
 
     public Update popUpdate(String chatId){
@@ -34,7 +34,7 @@ public class UserQueue {
     }
 
     public void push(String string, String chatId){
-        jedis.rpush(getQueueKey(chatId), string);
+        redisService.rpush(getQueueKey(chatId), string);
     }
 
 }

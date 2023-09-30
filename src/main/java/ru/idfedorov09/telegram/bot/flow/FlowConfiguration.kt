@@ -2,18 +2,21 @@ package ru.idfedorov09.telegram.bot.flow
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import ru.idfedorov09.telegram.bot.data.PropertyNames
 import ru.idfedorov09.telegram.bot.data.enums.BotGameStage
 import ru.idfedorov09.telegram.bot.data.enums.GlobalStage
 import ru.idfedorov09.telegram.bot.fetcher.*
 import ru.idfedorov09.telegram.bot.fetcher.global.GlobalAdminTextCommandsResolveFetcher
 import ru.idfedorov09.telegram.bot.fetcher.global.GlobalRegistrationFetcher
 import ru.idfedorov09.telegram.bot.fetcher.global.UserInfoPreActualizeFetcher
+import ru.idfedorov09.telegram.bot.service.RedisService
 
 /**
  * Основной класс, в котором строится последовательность вычислений (граф)
  */
 @Configuration
 open class FlowConfiguration(
+    private val redisService: RedisService,
     private val stageResolveFetcher: StageResolveFetcher,
     private val commandValidateResponseFetcher: CommandValidateResponseFetcher,
     private val stateFetcher: StateFetcher,
@@ -32,6 +35,7 @@ open class FlowConfiguration(
     private val mcFetcher: MCFetcher,
     private val dailyProblemFetcher: DayProblemFetcher,
     private val globalAdminTextCommandsResolveFetcher: GlobalAdminTextCommandsResolveFetcher,
+    private val startGamePhaseFetcher: StartGamePhaseFetcher,
 ) {
 
     /**
@@ -40,6 +44,16 @@ open class FlowConfiguration(
     @Bean(name = ["flowBuilder"])
     open fun flowBuilder(): FlowBuilder {
         val flowBuilder = FlowBuilder()
+        // test
+        redisService.setValue(
+            PropertyNames.START_BOARD_HASH,
+            "AgACAgIAAxkDAAITwmUXhRnJP1HnL6F3gtybvz7i5bEcAAJXyjEbNATBSDNdCEOBL8dDAQADAgADcwADMAQ",
+        )
+        // prod
+//        redisService.setValue(
+//            PropertyNames.START_BOARD_HASH,
+//            "AgACAgIAAxkDAAIEuGUXhUq-SUL5w-b_eXL1jSBKdtqBAAIK1DEb4c-5SF83eAsorcDiAQADAgADcwADMAQ",
+//        )
         flowBuilder.buildFlow()
         return flowBuilder
     }
@@ -81,6 +95,7 @@ open class FlowConfiguration(
                                     fetch(userRegFetcher)
                                 }
                                 group(condition = { exp.botGameStage == BotGameStage.GAME }) {
+                                    fetch(startGamePhaseFetcher)
                                     fetch(topFetcher)
                                     fetch(poolFetcher)
                                     fetch(newProblemFetcher)

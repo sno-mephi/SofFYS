@@ -10,6 +10,7 @@ enum class ResponseAction(
     START_GAME("/game_start"), // REG TO GAME
     START_APPEAL("/appeal_start"), // GAME to APPEAL
     FINISH_APPEAL("/appeal_finish"), // APPEAL TO AFTER_APPEAL Конец апелляции, подведение результатов
+    CLOSE_FULL_REG("/close_reg"),
 
     // пользовательские вида ```РУБРИКА_БАЛЛ (ответ)``` (или с ответом на сообщение)
     SEND_ANSWER(null),

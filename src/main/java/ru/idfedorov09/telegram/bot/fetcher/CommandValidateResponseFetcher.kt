@@ -9,6 +9,7 @@ import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
 import ru.idfedorov09.telegram.bot.data.enums.UserResponseType
 import ru.idfedorov09.telegram.bot.data.model.UserInfo
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
+import ru.idfedorov09.telegram.bot.data.repo.ProblemRepository
 import ru.idfedorov09.telegram.bot.data.repo.UserInfoRepository
 import ru.idfedorov09.telegram.bot.flow.ExpContainer
 import ru.idfedorov09.telegram.bot.flow.InjectData
@@ -24,6 +25,7 @@ import java.time.LocalDateTime
 class CommandValidateResponseFetcher(
     private val userInfoRepository: UserInfoRepository,
     private val userInfoService: UserInfoService,
+    private val problemRepository: ProblemRepository,
 ) : GeneralFetcher() {
 
     companion object {
@@ -155,7 +157,10 @@ class CommandValidateResponseFetcher(
         message ?: return null
         if (!isMessageContainsProblem(message)) return null
 
-        return message.split(" ")[1].toLongOrNull()
+        return problemRepository.findAll().find {
+            it.category?.lowercase() == message.split(" ")[0].lowercase() &&
+                it.cost == message.split(" ")[1].toLongOrNull()
+        }?.id
     }
 
     // TODO: дописать для случая REPLY

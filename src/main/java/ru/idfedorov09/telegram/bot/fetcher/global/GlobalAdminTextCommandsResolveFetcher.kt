@@ -80,6 +80,7 @@ class GlobalAdminTextCommandsResolveFetcher(
             "/org_stat" -> resetGlobalStageToEndGame(params)
             "/clear_action_127" -> clearActionTable(params)
             "/clear_all_game" -> clearAllGameData(params)
+            "/close_teams_reg" -> closeTeamsRegistration(params)
         }
 
         redisService.setValue(PropertyNames.STAGE_PROPERTY, exp.botGameStage.name)
@@ -154,6 +155,17 @@ class GlobalAdminTextCommandsResolveFetcher(
             SendMessage(
                 params.chatId,
                 "Ок, я отчистил всю инфу от игры",
+            ),
+        )
+    }
+
+    private fun closeTeamsRegistration(params: Params) {
+        // это не нужно сохранять в редис
+        params.exp.CAP_REGISTRATION_CLOSED_NOW = true
+        params.execute(
+            SendMessage(
+                params.chatId,
+                "Ок, закрыл регистрацию",
             ),
         )
     }

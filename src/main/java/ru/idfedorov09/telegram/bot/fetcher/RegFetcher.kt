@@ -3,19 +3,20 @@ package ru.idfedorov09.telegram.bot.fetcher
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import ru.idfedorov09.telegram.bot.data.enums.RegistrationStage
 import ru.idfedorov09.telegram.bot.data.enums.UserResponseType
 import ru.idfedorov09.telegram.bot.data.model.Team
+import ru.idfedorov09.telegram.bot.data.model.UserInfo
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
 import ru.idfedorov09.telegram.bot.data.repo.TeamRepository
 import ru.idfedorov09.telegram.bot.data.repo.UserInfoRepository
 import ru.idfedorov09.telegram.bot.executor.TelegramPollingBot
 import ru.idfedorov09.telegram.bot.flow.ExpContainer
 import ru.idfedorov09.telegram.bot.flow.InjectData
-import ru.idfedorov09.telegram.bot.service.RedisService
 
 @Component
 class RegFetcher(
@@ -24,6 +25,7 @@ class RegFetcher(
 ) : GeneralFetcher() {
     companion object {
         private val log = LoggerFactory.getLogger(this.javaClass)
+        private val confirmPrefix = "team_confirm "
     }
 
     @InjectData
@@ -32,6 +34,7 @@ class RegFetcher(
         bot: TelegramPollingBot,
         exp: ExpContainer,
         update: Update,
+        userInfo: UserInfo,
     ) {
         val tui = userResponse.initiator.tui ?: return
 
@@ -40,13 +43,14 @@ class RegFetcher(
                 when (userResponse.userResponseType) {
                     UserResponseType.MESSAGE_RESPONSE -> {
                         if (userResponse.initiator.isCaptain) {
+                            bot.execute(SendMessage(tui, "Ты уже создал команду"))
                             return
                         }
                         selectTeamName(tui, userResponse, bot)
                     }
 
                     UserResponseType.BUTTON_RESPONSE -> {
-                        confirmTeamCreate(tui, update)
+                        confirmTeamCreate(tui, update, bot, userInfo)
                     }
                     else -> return
                 }
@@ -106,23 +110,59 @@ class RegFetcher(
     private fun confirmTeamCreate(
         tui: String,
         update: Update,
+        bot: TelegramPollingBot,
+        userInfo: UserInfo,
     ) {
         val answer = update.callbackQuery.data
-        if (answer.startsWith("team_confirm")) {
-            val thisUser = userInfoRepository.findByTui(tui) ?: return
+        if (answer.startsWith(confirmPrefix)) {
+            if (userInfo.isCaptain) {
+                bot.execute(
+                    SendMessage(
+                        tui,
+                        "Ты уже зарегал команду",
+                    ),
+                )
+                return
+            }
+            val teamName = answer.removePrefix(confirmPrefix)
 
             val savedTeam: Team =
                 teamRepository.save(
                     Team(
-                        teamName = answer.substring(13),
+                        teamName = teamName,
                     ),
                 )
             userInfoRepository.save(
-                thisUser.copy(
+                userInfo.copy(
                     isCaptain = true,
                     teamId = savedTeam.id,
                 ),
             )
+
+            bot.execute(
+                SendMessage(
+                    tui,
+                    "Ура, твоя команда *$teamName* зарегистрирована",
+                ).also {
+                    it.enableMarkdown(true)
+                },
+            )
+        } else if (answer == "team_reg_cancel") {
+            if (userInfo.isCaptain) {
+                bot.execute(
+                    SendMessage(
+                        tui,
+                        "ты даун?)",
+                    ),
+                )
+            } else {
+                bot.execute(
+                    DeleteMessage(
+                        tui,
+                        update.callbackQuery.message.messageId.toInt(),
+                    ),
+                )
+            }
         }
     }
 

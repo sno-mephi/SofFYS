@@ -15,6 +15,7 @@ enum class ResponseAction(
     SEND_ANSWER(null),
     SELECT_PROBLEM(null),
     SEND_APPEAL(null),
+    CREATE_COMMAND(null),
 
     // текстовые (или с ответом на сообщение)
     GET_POOL("/pool"),

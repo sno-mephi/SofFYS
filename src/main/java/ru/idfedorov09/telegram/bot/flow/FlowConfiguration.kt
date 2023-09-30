@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration
 import ru.idfedorov09.telegram.bot.data.enums.BotGameStage
 import ru.idfedorov09.telegram.bot.data.enums.GlobalStage
 import ru.idfedorov09.telegram.bot.fetcher.*
+import ru.idfedorov09.telegram.bot.fetcher.global.GlobalAdminTextCommandsResolveFetcher
 import ru.idfedorov09.telegram.bot.fetcher.global.GlobalRegistrationFetcher
 import ru.idfedorov09.telegram.bot.fetcher.global.UserInfoPreActualizeFetcher
 
@@ -30,6 +31,7 @@ open class FlowConfiguration(
     private val globalRegistrationFetcher: GlobalRegistrationFetcher,
     private val mcFetcher: MCFetcher,
     private val dailyProblemFetcher: DayProblemFetcher,
+    private val globalAdminTextCommandsResolveFetcher: GlobalAdminTextCommandsResolveFetcher,
 ) {
 
     /**
@@ -54,6 +56,7 @@ open class FlowConfiguration(
             // если chat_id нет то ниче не делаем
             whenComplete(condition = { exp.hasChatId }) {
                 fetch(globalRegistrationFetcher)
+                fetch(globalAdminTextCommandsResolveFetcher)
                 // если пользователь не зареган то ливаем
                 whenComplete(condition = { exp.isRegistered }) {
                     fetch(mcFetcher)

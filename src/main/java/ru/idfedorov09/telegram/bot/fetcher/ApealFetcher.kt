@@ -81,6 +81,7 @@ class ApealFetcher(
                     "Вы не решали эту задачу",
                 ),
             )
+            return
         }
 
         team.appealedProblems.add(problemId)

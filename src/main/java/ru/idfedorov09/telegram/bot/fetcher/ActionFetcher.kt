@@ -32,8 +32,9 @@ class ActionFetcher(
             time = userResponse.receiveTime,
             action = userResponse.action,
             problemId = userResponse.problemId,
+            answer = userResponse.answer,
             isCorrectAnswer = isAnswer?.isAnswer,
-            correctAnswerAttempt = countActionsByTeamIdAndProblemIdAndAction?.countActionsByTeamIdAndProblemIdAndAction,
+            correctAnswerAttempt = userResponse.attemptAnswerNumber,
         )
 
         actionRepository.save(action)

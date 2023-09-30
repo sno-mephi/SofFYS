@@ -34,7 +34,7 @@ class ApealFetcher(
         exp: ExpContainer,
         update: Update,
     ) {
-        val tui = userResponse.initiator.tui ?: return
+        userResponse.initiator.tui ?: return
 
         if (!(exp.botGameStage == BotGameStage.APPEAL && userResponse.initiator.isCaptain)) {
             return
@@ -43,31 +43,63 @@ class ApealFetcher(
         val problemId = userResponse.problemId ?: return
         val team = userResponse.initiatorTeam ?: return
 
-        if (!team.id?.let { actionRepository.presenceOfIncorrectAnswers(it, problemId) }!! || problemId in team.appealedProblems) {
+        team.id ?: return
+
+        if (problemId in team.appealedProblems) {
+            bot.execute(
+                SendMessage(
+                    userResponse.initiator.tui,
+                    "Ты уже подал апелляцию на эту задачу!",
+                ),
+            )
             return
         }
 
-        team.appealedProblems.add(problemId)
-        teamRepository.save(team)
+        userResponse.initiator.teamId ?: return
+
+        val successAttempts = actionRepository.findCorrectAnswers(userResponse.initiator.teamId, userResponse.problemId)
+
+        if (successAttempts.any { it.correctAnswerAttempt == 1L }) {
+            bot.execute(
+                SendMessage(
+                    userResponse.initiator.tui,
+                    "Вы решили эту задачу на полный балл.",
+                ),
+            )
+            return
+        }
 
         val problemCategory = problemRepository.findById(problemId).get().category
         val problemCost = problemRepository.findById(problemId).get().cost
         val realAnswer = problemRepository.findById(problemId).get().answers
         val teamAnswers = actionRepository.findAnswersByTeamIdAndProblemId(team.id, problemId)
-        var message = "Команда ${team.teamName}. Задача:$problemCategory $problemCost." +
-            "\n Первый ответ команды: ${teamAnswers[0]} "
+
+        if (teamAnswers.isEmpty()) {
+            bot.execute(
+                SendMessage(
+                    userResponse.initiator.tui,
+                    "Вы не решали эту задачу",
+                ),
+            )
+        }
+
+        team.appealedProblems.add(problemId)
+        teamRepository.save(team)
+
+        var message = "Команда ${team.teamName}. Задача: $problemCategory $problemCost." +
+            "\nПервый ответ команды: ${teamAnswers[0]} "
 
         if (teamAnswers.size > 1) {
-            message += "\n второй ответ команды: ${teamAnswers[1]} "
-        } else { message += "\n второй ответ команды: (нету)" }
+            message += "\nВторой ответ команды: ${teamAnswers[1]} "
+        } else { message += "\nВторой ответ команда не давала" }
 
-        message += "\n верый ответ $realAnswer"
+        message += "\nВерый ответ $realAnswer"
         bot.execute(
             SendMessage(
                 "920061911",
                 message,
             ).also {
-                it.replyMarkup = createChooseKeyboard(userResponse)
+                it.replyMarkup = createChooseKeyboard(userResponse, teamAnswers.size)
             },
         )
     }
@@ -77,14 +109,16 @@ class ApealFetcher(
 
     private fun createChooseKeyboard(
         userResponse: UserResponse,
+        answersCount: Int,
     ) = createKeyboard(
         listOf(
-            listOf(
-                InlineKeyboardButton("Первый ответ верный ✅").also { it.callbackData = "First_true ${userResponse.initiatorTeam?.id} ${userResponse.problemId}" },
-                InlineKeyboardButton("Второй ответ верый ✅").also { it.callbackData = "Second_true ${userResponse.initiatorTeam?.id} ${userResponse.problemId}" },
-                InlineKeyboardButton("Ничего неверно ❌").also { it.callbackData = "No_true" },
-
-            ),
+            mutableListOf(
+                InlineKeyboardButton("первый ✅").also { it.callbackData = "First_true ${userResponse.initiatorTeam?.id} ${userResponse.problemId}" },
+                InlineKeyboardButton("второй ✅").also { it.callbackData = "Second_true ${userResponse.initiatorTeam?.id} ${userResponse.problemId}" },
+                InlineKeyboardButton("ничего ❌").also { it.callbackData = "No_true ${userResponse.initiatorTeam?.id} ${userResponse.problemId}" },
+            ).also {
+                if (answersCount <= 1) it.removeAt(1)
+            },
         ),
     )
 }

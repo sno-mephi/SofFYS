@@ -13,11 +13,11 @@ interface ActionRepository : JpaRepository<Action, Long> {
     fun countAnswer(@Param("teamId") teamId: Long, @Param("problemId") problemId: Long): Long
 
     @Query(
-        "SELECT CASE WHEN COUNT(a) > 0 THEN TRUE ELSE FALSE END " +
+        "SELECT a " +
             "FROM Action a " +
-            "WHERE a.teamId = :teamId AND a.problemId = :problemId AND a.action = 'SEND_ANSWER' AND a.isCorrectAnswer = false",
+            "WHERE a.teamId = :teamId AND a.problemId = :problemId AND a.action = 'SEND_ANSWER' AND a.isCorrectAnswer = true",
     )
-    fun presenceOfIncorrectAnswers(@Param("teamId") teamId: Long, @Param("problemId") problemId: Long): Boolean
+    fun findCorrectAnswers(@Param("teamId") teamId: Long, @Param("problemId") problemId: Long): List<Action>
 
     @Query(
         "SELECT a.answer FROM Action a " +

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
 import org.telegram.telegrambots.meta.api.objects.InputFile
+import ru.idfedorov09.telegram.bot.data.GlobalSets
 import ru.idfedorov09.telegram.bot.data.PropertyNames
 import ru.idfedorov09.telegram.bot.data.enums.BotGameStage
 import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
@@ -41,7 +42,7 @@ class StateFetcher(
         val startGameTime = redisService.getSafe(PropertyNames.START_GAME_TIME)
         startGameTime?.let {
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-            val endGameTime = LocalDateTime.parse(startGameTime, formatter).plusMinutes(30)
+            val endGameTime = LocalDateTime.parse(startGameTime, formatter).plusMinutes(GlobalSets.GAME_DURATION_IN_MINUTES)
             val timeDifference = Duration.between(LocalDateTime.now(ZoneId.of("Europe/Moscow")), endGameTime)
             answerMessage += String.format("\nОставшееся время игры: %d минут %d секунд", timeDifference.toMinutes(), timeDifference.seconds % 60)
 

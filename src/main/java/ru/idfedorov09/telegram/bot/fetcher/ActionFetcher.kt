@@ -25,6 +25,7 @@ class ActionFetcher(
         isAnswer: IsAnswer?,
         countActionsByTeamIdAndProblemIdAndAction: CountActionsByTeamIdAndProblemIdAndAction?,
     ) {
+        if (isAnswer?.isCheater == true) return
         // TODO: сохранять только нуные нам action
         val action = Action(
             teamId = userResponse.initiatorTeam?.id,

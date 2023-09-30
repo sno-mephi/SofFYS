@@ -36,7 +36,7 @@ class AnswerFetcher(
         if (userResponse.action != ResponseAction.SEND_ANSWER) return IsAnswer()
         val user = userResponse.initiator
         val problemId = userResponse.problemId ?: return IsAnswer()
-        val team = userResponse.initiatorTeam ?: return IsAnswer()
+        var team = userResponse.initiatorTeam ?: return IsAnswer()
         val tui = user.tui ?: return IsAnswer()
         val attemptNumber = userResponse.attemptAnswerNumber ?: 1
         val answer = userResponse.answer?.lowercase() ?: return IsAnswer()
@@ -49,12 +49,12 @@ class AnswerFetcher(
         }
         if (problemId !in team.problemsPool) {
             bot.execute(SendMessage(tui, "Вы еще не решаете эту задачу"))
-            return IsAnswer()
+            return IsAnswer(isCheater = true)
         }
         val isAnswer = problemRepository.findById(problemId).get().isAnswer(answer)
         if (isAnswer) {
             val point = problemRepository.findById(problemId).getOrNull()?.cost?.div(attemptNumber)
-            teamRepository.save(team.copy(points = team.points + point!!))
+            team = team.copy(points = team.points + point!!)
             itIsOver(team, problemId)
             bot.execute(SendMessage(tui, "Вы верно решили задачу, получите $point баллов"))
         } else {
@@ -64,8 +64,10 @@ class AnswerFetcher(
                     SendMessage(
                         tui,
                         "Вы израсходавали все попытки," +
-                            "правильный ответ: ${problemRepository.findById(problemId).get().answers}",
-                    ),
+                            "правильный ответ: *${problemRepository.findById(problemId).get().answers.firstOrNull()}*",
+                    ).also {
+                        it.enableMarkdown(true)
+                    },
                 )
             } else {
                 bot.execute(SendMessage(tui, "Неверно! У вас осталасть одна попытка"))

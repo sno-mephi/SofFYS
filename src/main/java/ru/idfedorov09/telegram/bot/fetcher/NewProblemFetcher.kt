@@ -1,5 +1,6 @@
 package ru.idfedorov09.telegram.bot.fetcher
 
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
@@ -13,6 +14,7 @@ import ru.idfedorov09.telegram.bot.executor.TelegramPollingBot
 import ru.idfedorov09.telegram.bot.flow.InjectData
 import ru.idfedorov09.telegram.bot.util.Board.changeBoard
 import java.io.File
+import kotlin.jvm.optionals.getOrNull
 
 @Component
 class NewProblemFetcher(
@@ -23,6 +25,7 @@ class NewProblemFetcher(
 
     companion object {
         private const val POLYAKOV_TRASH_ID = "473458128"
+        private val log = LoggerFactory.getLogger(this.javaClass)
     }
 
     @InjectData
@@ -36,7 +39,12 @@ class NewProblemFetcher(
         val problemId = userResponse.problemId ?: return
         val team = userResponse.initiatorTeam ?: return
         val teamId = team.id
-        val problemPhotoHash = problemRepository.findById(problemId).get().problemHash
+        val problemPhotoHash = problemRepository.findById(problemId).getOrNull()?.problemHash
+
+        problemPhotoHash ?: run {
+            log.error("Detected problem with uncorrect / without problemHash!")
+            return
+        }
 
         if (problemId in team.problemsPool) {
             bot.execute(

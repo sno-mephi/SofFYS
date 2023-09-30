@@ -81,7 +81,7 @@ class GlobalAdminTextCommandsResolveFetcher(
             "/clear_action_127" -> clearActionTable(params)
             "/clear_all_game" -> clearAllGameData(params)
             "/close_cap_reg" -> closeCapRegistration(params)
-            // "/close_"
+            "/close_reg" -> closeRegistration(params)
         }
 
         redisService.setValue(PropertyNames.STAGE_PROPERTY, exp.botGameStage.name)
@@ -156,6 +156,18 @@ class GlobalAdminTextCommandsResolveFetcher(
             SendMessage(
                 params.chatId,
                 "Ок, я отчистил всю инфу от игры",
+            ),
+        )
+    }
+
+    private fun closeRegistration(params: Params) {
+        params.exp.IS_STAGE_CHANGED = true
+        params.exp.botGameStage = BotGameStage.GAME
+        params.exp.registrationStage = RegistrationStage.NO_REGISTRATION
+        params.execute(
+            SendMessage(
+                params.chatId,
+                "Ок, перехожу к состоянию игры",
             ),
         )
     }

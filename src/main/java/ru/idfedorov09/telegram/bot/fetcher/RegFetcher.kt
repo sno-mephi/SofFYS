@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
+import ru.idfedorov09.telegram.bot.data.PropertyNames
 import ru.idfedorov09.telegram.bot.data.enums.RegistrationStage
 import ru.idfedorov09.telegram.bot.data.enums.UserResponseType
 import ru.idfedorov09.telegram.bot.data.model.Team
@@ -17,12 +18,14 @@ import ru.idfedorov09.telegram.bot.data.repo.UserInfoRepository
 import ru.idfedorov09.telegram.bot.executor.TelegramPollingBot
 import ru.idfedorov09.telegram.bot.flow.ExpContainer
 import ru.idfedorov09.telegram.bot.flow.InjectData
+import ru.idfedorov09.telegram.bot.service.RedisService
 import kotlin.jvm.optionals.getOrNull
 
 @Component
 class RegFetcher(
     private val teamRepository: TeamRepository,
     private val userInfoRepository: UserInfoRepository,
+    private val redisService: RedisService,
 ) : GeneralFetcher() {
     companion object {
         private val log = LoggerFactory.getLogger(this.javaClass)
@@ -131,6 +134,7 @@ class RegFetcher(
                 teamRepository.save(
                     Team(
                         teamName = teamName,
+                        lastBoardHash = redisService.getSafe(PropertyNames.START_BOARD_HASH),
                     ),
                 )
             userInfoRepository.save(

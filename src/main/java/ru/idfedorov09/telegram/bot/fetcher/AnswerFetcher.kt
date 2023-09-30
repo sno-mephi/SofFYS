@@ -73,7 +73,7 @@ class AnswerFetcher(
         val boardHash = bot.execute(
             SendPhoto().also {
                 it.chatId = POLYAKOV_TRASH_ID
-                it.photo = InputFile(File("sofFYS\\images\\boards\\$teamId.png"))
+                it.photo = InputFile(File("images/boards/$teamId.png"))
             },
         ).document.fileId
 

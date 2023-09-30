@@ -19,6 +19,10 @@ import ru.idfedorov09.telegram.bot.executor.TelegramPollingBot
 import ru.idfedorov09.telegram.bot.flow.ExpContainer
 import ru.idfedorov09.telegram.bot.flow.InjectData
 import ru.idfedorov09.telegram.bot.service.RedisService
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.StandardCopyOption
 import kotlin.jvm.optionals.getOrNull
 
 @Component
@@ -152,6 +156,8 @@ class RegFetcher(
                     it.enableMarkdown(true)
                 },
             )
+
+            copyFile("images/templates/initial.png", "images/boards/${savedTeam.id}.png")
         } else if (answer == "team_reg_cancel") {
             if (userInfo.isCaptain) {
                 bot.execute(
@@ -192,5 +198,17 @@ class RegFetcher(
                 it.enableMarkdown(true)
             },
         )
+    }
+
+    fun copyFile(source: String, destination: String) {
+        val sourcePath = Path.of(source)
+        val destinationPath = Path.of(destination)
+        try {
+            Files.createDirectories(destinationPath.parent)
+            Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING)
+            log.info("Create command board: $sourcePath -> $destinationPath")
+        } catch (e: IOException) {
+            log.error("can't create command board: $e")
+        }
     }
 }

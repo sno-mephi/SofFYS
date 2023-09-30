@@ -6,7 +6,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
-import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
 import ru.idfedorov09.telegram.bot.data.enums.BotGameStage
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
 import ru.idfedorov09.telegram.bot.data.repo.ActionRepository
@@ -56,9 +55,9 @@ class ApealFetcher(
         val realAnswer = problemRepository.findById(problemId).get().answers
         val teamAnswers = actionRepository.findAnswersByTeamIdAndProblemId(team.id, problemId)
         var message = "Команда ${team.teamName}. Задача:$problemCategory $problemCost." +
-                "\n Первый ответ команды: ${teamAnswers[0]} "
+            "\n Первый ответ команды: ${teamAnswers[0]} "
 
-                    if (teamAnswers.size > 1) {
+        if (teamAnswers.size > 1) {
             message += "\n второй ответ команды: ${teamAnswers[1]} "
         } else { message += "\n второй ответ команды: (нету)" }
 

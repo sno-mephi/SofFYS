@@ -25,16 +25,14 @@ class ActionFetcher(
         isAnswer: IsAnswer?,
         countActionsByTeamIdAndProblemIdAndAction: CountActionsByTeamIdAndProblemIdAndAction?,
     ) {
-        isAnswer ?: return
-
         // TODO: сохранять только нуные нам action
         val action = Action(
             teamId = userResponse.initiatorTeam?.id,
             time = userResponse.receiveTime,
             action = userResponse.action,
             problemId = userResponse.problemId,
-            isCorrectAnswer = isAnswer.isAnswer,
-            correctAnswerAttempt = null,
+            isCorrectAnswer = isAnswer?.isAnswer,
+            correctAnswerAttempt = countActionsByTeamIdAndProblemIdAndAction?.countActionsByTeamIdAndProblemIdAndAction,
         )
 
         actionRepository.save(action)

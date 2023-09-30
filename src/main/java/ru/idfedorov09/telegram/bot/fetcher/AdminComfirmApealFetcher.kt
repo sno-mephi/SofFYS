@@ -47,18 +47,18 @@ class AdminComfirmApealFetcher(
         val answer = update.callbackQuery.data.split(" ")
         val team = teamRepository.findById(answer[1].toLong()).get()
 
-       when (answer[0]) {
-           "First_true" -> {
-               val problemCost = problemRepository.findById(answer[2].toLong()).get().cost ?: return CountActionsByTeamIdAndProblemIdAndAction()
-               teamRepository.save(team.copy(points = team.points + problemCost))
-               return CountActionsByTeamIdAndProblemIdAndAction(1)
-           }
-           "Second_true" -> {
-               val problemCost = problemRepository.findById(answer[2].toLong()).get().cost ?: return CountActionsByTeamIdAndProblemIdAndAction()
-               teamRepository.save(team.copy(points = team.points + problemCost / 2))
-               return CountActionsByTeamIdAndProblemIdAndAction(2)
-           }
-           else -> return CountActionsByTeamIdAndProblemIdAndAction(0)
-       }
+        when (answer[0]) {
+            "First_true" -> {
+                val problemCost = problemRepository.findById(answer[2].toLong()).get().cost ?: return CountActionsByTeamIdAndProblemIdAndAction()
+                teamRepository.save(team.copy(points = team.points + problemCost))
+                return CountActionsByTeamIdAndProblemIdAndAction(1)
+            }
+            "Second_true" -> {
+                val problemCost = problemRepository.findById(answer[2].toLong()).get().cost ?: return CountActionsByTeamIdAndProblemIdAndAction()
+                teamRepository.save(team.copy(points = team.points + problemCost / 2))
+                return CountActionsByTeamIdAndProblemIdAndAction(2)
+            }
+            else -> return CountActionsByTeamIdAndProblemIdAndAction(0)
+        }
     }
 }

@@ -26,7 +26,6 @@ class ActionFetcher(
         countActionsByTeamIdAndProblemIdAndAction: CountActionsByTeamIdAndProblemIdAndAction?,
     ) {
         isAnswer ?: return
-        var countAnswers = countActionsByTeamIdAndProblemIdAndAction?.countActionsByTeamIdAndProblemIdAndAction ?: 1L
 
         // TODO: сохранять только нуные нам action
         val action = Action(

@@ -66,7 +66,6 @@ class NewProblemFetcher(
             return
         }
         team.problemsPool.add(problemId)
-        teamRepository.save(team)
 
         userInfoRepository.findAll()
             .filter { it.teamId == teamId }
@@ -85,9 +84,9 @@ class NewProblemFetcher(
         val boardHash = bot.execute(
             SendPhoto().also {
                 it.chatId = POLYAKOV_TRASH_ID
-                it.photo = InputFile(File("sofFYS\\images\\boards\\$teamId.png"))
+                it.photo = InputFile(File("images/boards/$teamId.png"))
             },
-        ).document.fileId
+        ).photo?.firstOrNull()?.fileId
 
         teamRepository.save(team.copy(lastBoardHash = boardHash))
     }

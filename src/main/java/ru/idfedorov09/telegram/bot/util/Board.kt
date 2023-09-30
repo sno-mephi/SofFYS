@@ -14,14 +14,14 @@ object Board {
         val s = 24L
 
         val image1: BufferedImage = if (color == "POOL") {
-            ImageIO.read(File("sofFYS\\images\\templates\\pool.png"))
+            ImageIO.read(File("images/templates/pool.png"))
         } else if (color == "COMPLETED") {
-            ImageIO.read(File("sofFYS\\images\\templates\\pool.png"))
+            ImageIO.read(File("images/templates/pool.png"))
         } else {
             return
         }
 
-        val image2 = ImageIO.read(File("sofFYS\\images\\boards\\$teamId.png"))
+        val image2 = ImageIO.read(File("images/boards/$teamId.png"))
 
         val croppedFragment = image1.getSubimage(
             (c + column * (x + s)).toInt(),
@@ -38,6 +38,6 @@ object Board {
         )
         g2d.dispose()
 
-        ImageIO.write(image2, "png", File("sofFYS\\images\\boards\\$teamId.png"))
+        ImageIO.write(image2, "png", File("images/boards/$teamId.png"))
     }
 }

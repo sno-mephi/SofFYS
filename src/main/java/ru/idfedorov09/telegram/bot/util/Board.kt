@@ -16,7 +16,7 @@ object Board {
         val image1: BufferedImage = if (color == "POOL") {
             ImageIO.read(File("images/templates/pool.png"))
         } else if (color == "COMPLETED") {
-            ImageIO.read(File("images/templates/pool.png"))
+            ImageIO.read(File("images/templates/completed.png"))
         } else {
             return
         }

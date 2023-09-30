@@ -15,6 +15,7 @@ import ru.idfedorov09.telegram.bot.executor.TelegramPollingBot
 import ru.idfedorov09.telegram.bot.flow.InjectData
 import ru.idfedorov09.telegram.bot.util.Board.changeBoard
 import java.io.File
+import kotlin.jvm.optionals.getOrNull
 
 @Component
 class AnswerFetcher(
@@ -37,7 +38,7 @@ class AnswerFetcher(
         val problemId = userResponse.problemId ?: return IsAnswer()
         val team = userResponse.initiatorTeam ?: return IsAnswer()
         val tui = user.tui ?: return IsAnswer()
-        val attemptNumber = userResponse.attemptAnswerNumber ?: return IsAnswer()
+        val attemptNumber = userResponse.attemptAnswerNumber ?: 1
         val answer = userResponse.answer?.lowercase() ?: return IsAnswer()
         val teamId = team.id
 
@@ -52,7 +53,7 @@ class AnswerFetcher(
         }
         val isAnswer = problemRepository.findById(problemId).get().isAnswer(answer)
         if (isAnswer) {
-            val point = problemRepository.findById(problemId).get().cost?.div(attemptNumber)
+            val point = problemRepository.findById(problemId).getOrNull()?.cost?.div(attemptNumber)
             teamRepository.save(team.copy(points = team.points + point!!))
             itIsOver(team, problemId)
             bot.execute(SendMessage(tui, "Вы верно решили задачу, получите $point баллов"))
@@ -75,7 +76,7 @@ class AnswerFetcher(
                 it.chatId = POLYAKOV_TRASH_ID
                 it.photo = InputFile(File("images/boards/$teamId.png"))
             },
-        ).document.fileId
+        ).photo.firstOrNull()?.fileId
 
         teamRepository.save(team.copy(lastBoardHash = boardHash))
         return IsAnswer(isAnswer)

@@ -43,13 +43,13 @@ class TopFetcher(
 
         sortedTeamList.forEach { team ->
             if (team.first == userResponse.initiatorTeam?.teamName) {
-                answerMessage += "\n$i. **${team.first}**: ${team.second}"
+                answerMessage += "\n$i. *${team.first}*: ${team.second}"
             } else {
                 answerMessage += "\n$i. ${team.first}: ${team.second}"
             }
             i++
         }
 
-        bot.execute(SendMessage(tui, answerMessage).also { it.enableMarkdown(true) })
+        bot.execute(SendMessage(tui, answerMessage))
     }
 }

@@ -9,6 +9,7 @@ import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
 import ru.idfedorov09.telegram.bot.data.enums.UserResponseType
 import ru.idfedorov09.telegram.bot.data.model.UserInfo
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
+import ru.idfedorov09.telegram.bot.data.repo.ActionRepository
 import ru.idfedorov09.telegram.bot.data.repo.ProblemRepository
 import ru.idfedorov09.telegram.bot.data.repo.UserInfoRepository
 import ru.idfedorov09.telegram.bot.flow.ExpContainer
@@ -26,6 +27,7 @@ class CommandValidateResponseFetcher(
     private val userInfoRepository: UserInfoRepository,
     private val userInfoService: UserInfoService,
     private val problemRepository: ProblemRepository,
+    private val actionRepository: ActionRepository,
 ) : GeneralFetcher() {
 
     companion object {
@@ -59,16 +61,6 @@ class CommandValidateResponseFetcher(
         val initiatorTeam = userInfoService.getTeam(initiator)
 
         val userResponse = when {
-            isProblemSelect(message) -> UserResponse(
-                initiator = initiator,
-                initiatorTeam = initiatorTeam,
-                userResponseType = UserResponseType.MESSAGE_RESPONSE,
-                action = ResponseAction.SELECT_PROBLEM,
-                receiveTime = currentTime,
-                problemId = extractProblemId(message),
-                answer = null,
-                messageText = message,
-            )
             isAnswerToProblem(message) -> UserResponse(
                 initiator = initiator,
                 initiatorTeam = initiatorTeam,
@@ -77,6 +69,16 @@ class CommandValidateResponseFetcher(
                 receiveTime = currentTime,
                 problemId = extractProblemId(message),
                 answer = extractAnswer(message),
+                messageText = message,
+            )
+            isProblemSelect(message) -> UserResponse(
+                initiator = initiator,
+                initiatorTeam = initiatorTeam,
+                userResponseType = UserResponseType.MESSAGE_RESPONSE,
+                action = ResponseAction.SELECT_PROBLEM,
+                receiveTime = currentTime,
+                problemId = extractProblemId(message),
+                answer = null,
                 messageText = message,
             )
             isOtherCommand -> UserResponse(
@@ -125,6 +127,15 @@ class CommandValidateResponseFetcher(
         }
         // если есть userResponse, то команда валидная -> ставим флажок
         return userResponse?.also { exp.IS_VALID_COMMAND = true }
+            .getAttemptAnswerNumber()
+    }
+
+    private fun UserResponse?.getAttemptAnswerNumber(): UserResponse? {
+        this?.initiatorTeam?.id ?: return this
+        this.problemId ?: return this
+        val kek = actionRepository.findAll()
+        val countAnswers = actionRepository.countAnswer(this.initiatorTeam.id, problemId)
+        return this.copy(attemptAnswerNumber = countAnswers)
     }
 
     /**

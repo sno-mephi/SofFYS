@@ -4,7 +4,7 @@ enum class ResponseAction(
     val textForm: String?,
 ) {
     // админские
-    DEFAULT_VALUE("default_value"),
+    UNKNOWN_ACTION("unknown_action"),
     START_REGISTRATION("/game_reg_start"), // OFF TO REG
     START_TEAMS_INVITE("/teams_invite"),
     START_GAME("/game_start"), // REG TO GAME

@@ -6,6 +6,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
+import ru.idfedorov09.telegram.bot.data.PropertyNames
+import ru.idfedorov09.telegram.bot.data.enums.RegistrationStage
 import ru.idfedorov09.telegram.bot.data.model.UserResponse
 import ru.idfedorov09.telegram.bot.data.repo.TeamRepository
 import ru.idfedorov09.telegram.bot.data.repo.UserInfoRepository
@@ -34,6 +36,9 @@ class UserRegFetcher(
         if (!exp.CAP_REGISTRATION_CLOSED_NOW) {
             return
         }
+
+        exp.registrationStage = RegistrationStage.TEAM_REGISTRATION
+        redisService.setValue(PropertyNames.STAGE_GAME_REG_PROPERTY, exp.registrationStage.name)
 
         userInfoRepository.findAll()
             .forEach { user ->

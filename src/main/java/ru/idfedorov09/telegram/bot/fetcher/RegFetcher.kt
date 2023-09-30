@@ -17,6 +17,7 @@ import ru.idfedorov09.telegram.bot.data.repo.UserInfoRepository
 import ru.idfedorov09.telegram.bot.executor.TelegramPollingBot
 import ru.idfedorov09.telegram.bot.flow.ExpContainer
 import ru.idfedorov09.telegram.bot.flow.InjectData
+import kotlin.jvm.optionals.getOrNull
 
 @Component
 class RegFetcher(
@@ -60,7 +61,7 @@ class RegFetcher(
                 if (userResponse.userResponseType != UserResponseType.BUTTON_RESPONSE) {
                     return
                 }
-                messageFromNoCap(tui, update, bot)
+                messageFromNoCap(tui, update, bot, userInfo)
             }
 
             else -> return
@@ -99,7 +100,7 @@ class RegFetcher(
         bot.execute(
             SendMessage(
                 tui,
-                "Вы точно хотите зарегистрировать команду **$teamName**?",
+                "Вы точно хотите зарегистрировать команду *$teamName*?",
             ).also {
                 it.enableMarkdown(true)
                 it.replyMarkup = createChooseKeyboard(teamName)
@@ -170,14 +171,22 @@ class RegFetcher(
         tui: String,
         update: Update,
         bot: TelegramPollingBot,
+        userInfo: UserInfo,
     ) {
-        val answer = update.callbackQuery.data
-        val thisUser = userInfoRepository.findByTui(tui) ?: return
+        val teamId = update.callbackQuery.data.toLongOrNull()
+        val team = teamId?.let { teamRepository.findById(it).getOrNull() }
         userInfoRepository.save(
-            thisUser.copy(
-                teamId = answer.toLongOrNull(),
+            userInfo.copy(
+                teamId = teamId,
             ),
         )
-        bot.execute(SendMessage(tui, "Ты успешно вступил в команду!"))
+        bot.execute(
+            SendMessage(
+                tui,
+                "Ты успешно вступил в команду *`${team?.teamName}`*!",
+            ).also {
+                it.enableMarkdown(true)
+            },
+        )
     }
 }

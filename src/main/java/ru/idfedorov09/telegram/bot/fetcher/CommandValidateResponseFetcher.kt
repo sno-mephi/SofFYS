@@ -3,6 +3,7 @@ package ru.idfedorov09.telegram.bot.fetcher
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.objects.Update
+import ru.idfedorov09.telegram.bot.data.enums.BotGameStage
 import ru.idfedorov09.telegram.bot.data.enums.RegistrationStage
 import ru.idfedorov09.telegram.bot.data.enums.ResponseAction
 import ru.idfedorov09.telegram.bot.data.enums.UserResponseType
@@ -36,7 +37,7 @@ class CommandValidateResponseFetcher(
         exp: ExpContainer,
     ): UserResponse? {
         val currentTime = LocalDateTime.now()
-        val message = updatesUtil.getText(update)?.lowercase()
+        val message = updatesUtil.getText(update)
         val command = message?.split(" ")?.get(0)
         val chatId = updatesUtil.getChatId(update) ?: return null
 
@@ -69,7 +70,7 @@ class CommandValidateResponseFetcher(
             isAnswerToProblem(message) -> UserResponse(
                 initiator = initiator,
                 initiatorTeam = initiatorTeam,
-                userResponseType = extractAnswerType(),
+                userResponseType = extractAnswerType(update),
                 action = ResponseAction.SEND_ANSWER,
                 receiveTime = currentTime,
                 problemId = extractProblemId(message),
@@ -89,6 +90,23 @@ class CommandValidateResponseFetcher(
             else -> null
         }
 
+        if (
+            exp.botGameStage == BotGameStage.REGISTRATION &&
+            exp.registrationStage == RegistrationStage.CAP_REGISTRATION &&
+            userResponse == null
+        ) {
+            exp.IS_VALID_COMMAND = true
+            return UserResponse(
+                initiator = initiator,
+                initiatorTeam = initiatorTeam,
+                userResponseType = extractAnswerType(update),
+                action = ResponseAction.CREATE_COMMAND,
+                receiveTime = currentTime,
+                problemId = null,
+                answer = null,
+                messageText = message,
+            )
+        }
         // если есть userResponse, то команда валидная -> ставим флажок
         return userResponse?.also { exp.IS_VALID_COMMAND = true }
     }
@@ -141,8 +159,8 @@ class CommandValidateResponseFetcher(
     }
 
     // TODO: дописать для случая REPLY
-    private fun extractAnswerType(): UserResponseType {
-        return UserResponseType.MESSAGE_RESPONSE
+    private fun extractAnswerType(update: Update): UserResponseType {
+        return if (update.hasCallbackQuery()) UserResponseType.BUTTON_RESPONSE else UserResponseType.MESSAGE_RESPONSE
     }
 
     private fun getUserInfoOrInsertToDb(

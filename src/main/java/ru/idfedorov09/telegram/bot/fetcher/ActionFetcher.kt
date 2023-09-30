@@ -21,9 +21,11 @@ class ActionFetcher(
     @InjectData
     fun doFetch(
         userResponse: UserResponse,
-        isAnswer: IsAnswer,
-        countActionsByTeamIdAndProblemIdAndAction: CountActionsByTeamIdAndProblemIdAndAction,
+        isAnswer: IsAnswer?,
+        countActionsByTeamIdAndProblemIdAndAction: CountActionsByTeamIdAndProblemIdAndAction?,
     ) {
+        isAnswer ?: return
+        countActionsByTeamIdAndProblemIdAndAction ?: return
         // TODO: сохранять только нуные нам action
         val action = Action(
             teamId = userResponse.initiatorTeam?.id,
